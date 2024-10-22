@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Personal Page</title>
+    <style>
+      body {
+        font-family: "Roboto", sans-serif;
+        line-height: 1.6;
+        background: #333;
+        color: #333;
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        transition: background-color 0.3s ease, color 0.3s ease;
+        overflow: auto;
+      }
+      .background {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        overflow: hidden;
+        pointer-events: none;
+      }
+      .tile {
+        position: absolute;
+        width: 200px;
+        height: 200px;
+        background: url("https://via.placeholder.com/200") no-repeat;
+        transform-origin: center;
+      }
+      header {
+        background-color: rgba(44, 62, 80, 0.8);
+        color: #fff;
+        padding: 20px;
+        text-align: center;
+        transition: background-color 0.3s ease;
+      }
+      nav {
+        text-align: center;
+        margin: 20px;
+      }
+      nav a {
+        margin: 0 15px;
+        text-decoration: none;
+        color: #2c3e50;
+        font-weight: bold;
+        transition: color 0.3s ease;
+      }
+      nav a:hover {
+        color: #1a252f;
+      }
+      section {
+        margin: 20px;
+        padding: 20px;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: box-shadow 0.3s ease;
+      }
+      section:hover {
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      }
+      footer {
+        text-align: center;
+        padding: 10px;
+        background-color: rgba(44, 62, 80, 0.8);
+        color: #fff;
+        margin-top: auto;
+        width: 100%;
+        transition: background-color 0.3s ease;
+      }
+      img {
+        display: block;
+        margin: 0 auto;
+        border-radius: 50%;
+        width: 150px;
+        height: 150px;
+        object-fit: cover;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: box-shadow 0.3s ease;
+      }
+      img:hover {
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      }
+      ul li {
+        list-style-type: none;
+        margin: 10px 0;
+      }
+      ul li a {
+        color: #2c3e50;
+        text-decoration: none;
+        transition: color 0.3s ease;
+      }
+      ul li a:hover {
+        color: #1a252f;
+      }
+      @keyframes typewriter {
+        from {
+          width: 0;
+        }
+        to {
+          width: 100%;
+        }
+      }
+      @keyframes delete {
+        from {
+          width: 100%;
+        }
+        to {
+          width: 0;
+        }
+      }
+      h1 {
+        overflow: hidden;
+        white-space: nowrap;
+        margin: 0 auto;
+        letter-spacing: 0.15em;
+        animation: typing 12s steps(40, end) infinite;
+      }
+      @keyframes typing {
+        0% {
+          width: 0;
+        }
+        20% {
+          width: 100%;
+        }
+        40% {
+          width: 100%;
+        }
+        60% {
+          width: 0;
+        }
+        100% {
+          width: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="background" id="background"></div>
+    <header>
+      <h1>Marco Santarcangelo</h1>
+      <script>
+        document.addEventListener("DOMContentLoaded", function () {
+          const words = [
+            "Marco Santarcangelo",
+            "Full Stack Developer",
+            "Cloud Engineer",
+            "Front End Engineer",
+          ];
+          let i = 0;
+          setInterval(() => {
+            document.querySelector("h1").textContent =
+              words[i++ % words.length];
+          }, 4000);
+        });
+      </script>
+    </header>
+
+    <nav>
+      <a href="#about-me">About Me</a>
+      <a href="#experience-education">Experience & Education</a>
+      <a href="#contact">Contact</a>
+    </nav>
+
+    <section id="about-me">
+      <h2>About Me</h2>
+      <img src="https://via.placeholder.com/150" alt="Profile Picture" />
+      <p>
+        Hello, I am Marco Santarcangelo, a passionate Software Development
+        Engineer with experience in embedded systems for IoT, Computer Vision
+        (Go), Android development (Java, Kotlin), iOS (Swift), Backend (Java,
+        Node.js, Nest.js, Django, Kotlin), and Frontend (React.js, Redux). I
+        consider myself a creative and resourceful person, always eager to learn
+        and improve as a professional.
+      </p>
+    </section>
+
+    <section id="experience-education">
+      <h2>Experience & Education</h2>
+      <h3>Professional Experience</h3>
+      <p>
+        <strong>Cloud Development Engineer - Caylent (2024 - Present):</strong>
+        Acting as a key member of the cloud development team, contributing
+        scalable solutions based on GenAI. Collaborated with cross-functional
+        teams to design and implement cloud-based solutions, ensuring
+        scalability and reliability.
+      </p>
+      <p>
+        <strong>Software Development Engineer - Amazon (2022 - 2023):</strong>
+        Responsible for maintaining and developing critical components for
+        large-scale products using Kotlin, Swift, React, and DynamoDB. Actively
+        participated in code reviews, provided valuable feedback, and
+        demonstrated strong problem-solving skills to quickly resolve issues and
+        minimize downtime.
+      </p>
+      <p>
+        <strong>Full Stack Developer - ZkSystems (2021 - 2022):</strong>
+        Developed multiplatform applications using React, AWS, Nestjs, and
+        GitlabCI. Led a team of engineers in the development of a cloud-based
+        robotic process automation application, taking charge of the solution's
+        architecture, database design and maintenance, CICD configuration, and
+        backend development.
+      </p>
+      <p>
+        <strong>Full Stack Developer - Rebellion Pay (2020 - 2021):</strong>
+        Migrated a monolithic backend to microservices, implementing Kubernetes
+        for efficient management. Developed and deployed multiple microservices
+        in a Kubernetes cluster, ensuring seamless integration and efficient
+        communication between services.
+      </p>
+      <p>
+        <strong>Front-end Developer (Freelance) (2019 - 2020):</strong> Built a
+        cryptocurrency exchange platform using React.js, Redux, Sagas, and
+        MaterialUI. Collaborated closely with designers and back-end developers
+        to ensure seamless integration of front-end components and
+        functionality.
+      </p>
+      <p>
+        <strong>Back-end, Android & iOS Developer - SysOne (2019):</strong>
+        Developed back-end solutions using Java, Android apps using Java, and
+        iOS apps using Swift. Worked on scalable solutions, ensuring effective
+        client support and satisfaction.
+      </p>
+      <p>
+        <strong
+          >IoT & Computer Vision Developer - WeHaus IoT (2018 - 2019):</strong
+        >
+        Played a key role in the development of a SmartHome IoT solution and a
+        computer vision system for building security. Utilized C and Go for
+        embedded systems and developed ZigBee protocols for seamless
+        communication between IoT devices.
+      </p>
+      <h3>Education</h3>
+      <p>
+        <strong
+          >Computer Engineer - Universidad Nacional de La Plata (2012 -
+          2018):</strong
+        >
+        Degree in Computer Engineering.
+      </p>
+    </section>
+
+    <section id="contact">
+      <h2>Contact</h2>
+      <p>
+        If you wish to contact me, you can do so via email:
+        <a href="mailto:marcosantar93@gmail.com">marcosantar93@gmail.com</a> or
+        follow me on my social media:
+      </p>
+      <ul>
+        <li>
+          <a href="https://linkedin.com/in/marco-santarcangelo">LinkedIn</a>
+        </li>
+        <li><a href="https://github.com/tu-usuario">GitHub</a></li>
+        <li><a href="https://twitter.com/tu-usuario">Twitter</a></li>
+      </ul>
+    </section>
+
+    <footer>
+      <p>&copy; 2024 Marco Santarcangelo. All rights reserved.</p>
+    </footer>
+
+    <script>
+      document.addEventListener("scroll", () => {
+        const scrollPosition = window.scrollY;
+        const totalScrollHeight =
+          document.documentElement.scrollHeight - window.innerHeight;
+        const scrollPercentage = scrollPosition / totalScrollHeight;
+        const angle = scrollPercentage * 360;
+        const tiles = document.querySelectorAll(".tile");
+        tiles.forEach((tile) => {
+          tile.style.transform = `rotate(${angle}deg)`;
+        });
+      });
+
+      document.addEventListener("DOMContentLoaded", () => {
+        const background = document.getElementById("background");
+        const tiles = [];
+        const rows = Math.ceil(window.innerHeight / 200);
+        const cols = Math.ceil(window.innerWidth / 200);
+
+        for (let row = 0; row < rows; row++) {
+          for (let col = 0; col < cols; col++) {
+            const tile = document.createElement("div");
+            tile.classList.add("tile");
+            tile.style.top = `${row * 200}px`;
+            tile.style.left = `${col * 200}px`;
+            background.appendChild(tile);
+            tiles.push(tile);
+          }
+        }
+      });
+    </script>
+  </body>
+</html>
+
