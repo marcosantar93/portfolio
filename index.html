@@ -6,9 +6,10 @@
     <title>Personal Page</title>
     <style>
       body {
-        font-family: "Roboto", sans-serif;
+        font-family: monospace, sans-serif;
         line-height: 1.6;
-        background: url("images/double-bubble-outline.webp") repeat;
+        background: url("images/oriental-tiles.png") repeat;
+        background-position: -40%;
         color: #333;
         margin: 0;
         padding: 0;
@@ -16,7 +17,9 @@
         display: flex;
         flex-direction: column;
         transition: background-color 0.3s ease, color 0.3s ease;
-        overflow: auto;
+        overflow-y: auto;
+        overflow-x: hidden;
+        max-width: 100vw;
       }
       .background {
         position: fixed;
@@ -32,11 +35,10 @@
         position: absolute;
         width: 200px;
         height: 200px;
-        background: url("images/double-bubble-outline.webp") no-repeat;
+        background: url("images/oriental-tiles.png") no-repeat;
         transform-origin: center;
       }
       header {
-        background-color: rgba(44, 62, 80, 0.8);
         color: #fff;
         padding: 20px;
         text-align: center;
@@ -49,20 +51,79 @@
       nav a {
         margin: 0 15px;
         text-decoration: none;
-        color: #2c3e50;
+        color: #fff;
         font-weight: bold;
-        transition: color 0.3s ease;
+        transition: color 0.4s ease;
+        position: relative;
+        overflow: hidden;
       }
-      nav a:hover {
-        color: #1a252f;
+      nav a::after {
+        content: "";
+        display: block;
+        position: absolute;
+        bottom: -0.2rem;
+        left: 50%;
+        width: 0;
+        height: 3px;
+        background-image: linear-gradient(90deg, #3498db, #2ecc71, #3498db);
+        transition: width 0.4s ease, left 0.4s ease;
+        z-index: -1;
+      }
+      nav a:hover::after {
+        width: 100%;
+        left: 0;
       }
       section {
         margin: 20px;
         padding: 20px;
-        background: rgba(255, 255, 255, 0.9);
-        border-radius: 8px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        background-color: rgba(255, 255, 255, 0.8);
+        border-radius: 10px;
         transition: box-shadow 0.3s ease;
+        position: relative;
+        transition: background-color 0.3s ease;
+      }
+      section:hover {
+        background-color: rgba(255, 255, 255, 0.9);
+      }
+      @property --angle {
+        syntax: "<angle>";
+        initial-value: 0deg;
+        inherits: false;
+      }
+      section::after,
+      section::before {
+        content: "";
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background-image: conic-gradient(
+          from var(--angle),
+          #3498db,
+          #9b59b6,
+          #e74c3c,
+          #f1c40f,
+          #2ecc71,
+          #3498db
+        );
+        top: 50%;
+        left: 50%;
+        translate: -50% -50%;
+        z-index: -1;
+        padding: 3px;
+        border-radius: 12px;
+        animation: 3s spin linear infinite;
+      }
+      @keyframes spin {
+        from {
+          --angle: 0deg;
+        }
+        to {
+          --angle: 360deg;
+        }
+      }
+      section::before {
+        filter: blur(1.5rem);
+        opacity: 0.5;
       }
       section:hover {
         box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
@@ -78,10 +139,13 @@
       }
       img {
         display: block;
-        margin: 0 auto;
+        margin-left: 2rem;
         border-radius: 50%;
-        width: 150px;
-        height: 150px;
+        flex: 0 0 auto;
+        max-width: 150px;
+        width: 100%;
+        max-height: 150px;
+        height: auto;
         object-fit: cover;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         transition: box-shadow 0.3s ease;
@@ -101,44 +165,56 @@
       ul li a:hover {
         color: #1a252f;
       }
-      @keyframes typewriter {
-        from {
-          width: 0;
-        }
-        to {
-          width: 100%;
-        }
-      }
-      @keyframes delete {
-        from {
-          width: 100%;
-        }
-        to {
-          width: 0;
-        }
-      }
       h1 {
         overflow: hidden;
         white-space: nowrap;
         margin: 0 auto;
         letter-spacing: 0.15em;
-        animation: typing 12s steps(40, end) infinite;
+        display: inline-block;
+        vertical-align: middle;
       }
-      @keyframes typing {
-        0% {
-          width: 0;
+      #job-title {
+        display: inline-block;
+        vertical-align: middle;
+      }
+      .about-container {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      .about-me {
+        flex: 1;
+        min-width: 250px;
+      }
+      @media (max-width: 768px) {
+        .about-container {
+          flex-direction: column;
+          align-items: center;
         }
-        20% {
-          width: 100%;
+        img {
+          margin-left: 0;
+          margin-top: 2rem;
         }
-        40% {
-          width: 100%;
+        h1 {
+          font-size: 1.5rem;
+          white-space: normal;
         }
-        60% {
-          width: 0;
+        #job-title {
+          display: block;
+          margin-top: 0.5rem;
+          min-height: 2rem;
         }
-        100% {
-          width: 0;
+      }
+      @media (max-width: 600px) {
+        nav {
+          margin: 0;
+        }
+        nav a {
+          display: block;
+          margin: 5px 0;
+        }
+        h1 {
+          font-size: 1.2rem;
         }
       }
     </style>
@@ -146,20 +222,58 @@
   <body>
     <div class="background" id="background"></div>
     <header>
-      <h1>Marco Santarcangelo</h1>
+      <h1>Marco Santarcangelo: <span id="job-title"></span></h1>
       <script>
         document.addEventListener("DOMContentLoaded", function () {
-          const words = [
-            "Marco Santarcangelo",
-            "Full Stack Developer",
-            "Cloud Engineer",
-            "Front End Engineer",
-          ];
-          let i = 0;
-          setInterval(() => {
-            document.querySelector("h1").textContent =
-              words[i++ % words.length];
-          }, 4000);
+          const titles = ["Full Stack", "Cloud Engineer", "Front End Dev"];
+          let currentIndex = -1;
+          let previousIndex = -1;
+          const typingSpeed = 100;
+          const erasingSpeed = 50;
+          const delayBetweenTitles = 2000;
+          const jobTitleElement = document.getElementById("job-title");
+
+          function typeTitle(title, callback) {
+            let charIndex = 0;
+            function typeChar() {
+              if (charIndex < title.length) {
+                jobTitleElement.textContent += title.charAt(charIndex);
+                charIndex++;
+                setTimeout(typeChar, typingSpeed);
+              } else {
+                setTimeout(callback, delayBetweenTitles);
+              }
+            }
+            typeChar();
+          }
+
+          function eraseTitle(callback) {
+            let title = jobTitleElement.textContent;
+            let charIndex = title.length - 1;
+            function eraseChar() {
+              if (charIndex >= 0) {
+                jobTitleElement.textContent = title.substring(0, charIndex);
+                charIndex--;
+                setTimeout(eraseChar, erasingSpeed);
+              } else {
+                callback();
+              }
+            }
+            eraseChar();
+          }
+
+          function typeWriter() {
+            do {
+              currentIndex = Math.floor(Math.random() * titles.length);
+            } while (currentIndex === previousIndex);
+            previousIndex = currentIndex;
+            const currentTitle = titles[currentIndex];
+            typeTitle(currentTitle, function () {
+              eraseTitle(typeWriter);
+            });
+          }
+
+          typeWriter();
         });
       </script>
     </header>
@@ -170,20 +284,22 @@
       <a href="#contact">Contact</a>
     </nav>
 
-    <section id="about-me">
+    <section class="card" id="about-me">
       <h2>About Me</h2>
-      <img src="images/me.jpeg" alt="Profile Picture" />
-      <p>
-        Hello, I am Marco Santarcangelo, a passionate Software Development
-        Engineer with experience in embedded systems for IoT, Computer Vision
-        (Go), Android development (Java, Kotlin), iOS (Swift), Backend (Java,
-        Node.js, Nest.js, Django, Kotlin), and Frontend (React.js, Redux). I
-        consider myself a creative and resourceful person, always eager to learn
-        and improve as a professional.
-      </p>
+      <div class="about-container">
+        <p class="about-me">
+          Hello, I am Marco Santarcangelo, a passionate Software Development
+          Engineer with experience in embedded systems for IoT, Computer Vision
+          (Go), Android development (Java, Kotlin), iOS (Swift), Backend (Java,
+          Node.js, Nest.js, Django, Kotlin), and Frontend (React.js, Redux). I
+          consider myself a creative and resourceful person, always eager to
+          learn and improve as a professional.
+        </p>
+        <img src="images/me.jpeg" alt="Profile Picture" />
+      </div>
     </section>
 
-    <section id="experience-education">
+    <section class="card" id="experience-education">
       <h2>Experience & Education</h2>
       <h3>Professional Experience</h3>
       <p>
@@ -248,7 +364,7 @@
       </p>
     </section>
 
-    <section id="contact">
+    <section class="card" id="contact">
       <h2>Contact</h2>
       <p>
         If you wish to contact me, you can do so via email:
@@ -268,6 +384,15 @@
     </footer>
 
     <script>
+      document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+        anchor.addEventListener("click", function (e) {
+          e.preventDefault();
+
+          document.querySelector(this.getAttribute("href")).scrollIntoView({
+            behavior: "smooth",
+          });
+        });
+      });
       document.addEventListener("scroll", () => {
         const scrollPosition = window.scrollY;
         const totalScrollHeight =
@@ -283,15 +408,16 @@
       document.addEventListener("DOMContentLoaded", () => {
         const background = document.getElementById("background");
         const tiles = [];
-        const rows = Math.ceil(window.innerHeight / 200);
-        const cols = Math.ceil(window.innerWidth / 200);
+        const tileSize = 200;
+        const rows = Math.ceil(window.innerHeight / tileSize) + 1;
+        const cols = Math.ceil(window.innerWidth / tileSize) + 1;
 
         for (let row = 0; row < rows; row++) {
           for (let col = 0; col < cols; col++) {
             const tile = document.createElement("div");
             tile.classList.add("tile");
-            tile.style.top = `${row * 200}px`;
-            tile.style.left = `${col * 200}px`;
+            tile.style.top = `${row * tileSize}px`;
+            tile.style.left = `${col * tileSize}px`;
             background.appendChild(tile);
             tiles.push(tile);
           }
