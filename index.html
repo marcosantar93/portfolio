@@ -583,7 +583,7 @@
         el.textContent = current.substring(0, deleting ? j-- : j++);
 
         let delay = deleting ? 40 : 80;
-        if (!deleting && j === current.length) { delay = 2000; deleting = true; }
+        if (!deleting && j > current.length) { delay = 2000; deleting = true; }
         else if (deleting && j === 0) { deleting = false; i = (i + 1) % titles.length; delay = 400; }
 
         setTimeout(type, delay);
