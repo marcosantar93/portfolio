@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Research - Marco Santarcangelo</title>
+    <style>
+      body {
+        font-family: monospace, sans-serif;
+        line-height: 1.8;
+        background: url("images/oriental-tiles.png") repeat;
+        background-position: -40%;
+        color: #333;
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        transition: background-color 0.3s ease, color 0.3s ease;
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+
+      .background {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        overflow: hidden;
+        pointer-events: none;
+      }
+
+      .tile {
+        position: absolute;
+        width: 200px;
+        height: 200px;
+        background: url("images/oriental-tiles.png") no-repeat;
+        transform-origin: center;
+      }
+
+      header {
+        color: #fff;
+        padding: 20px;
+        text-align: center;
+        transition: background-color 0.3s ease;
+      }
+
+      nav {
+        text-align: center;
+        margin: 20px;
+      }
+
+      nav a {
+        margin: 0 15px;
+        text-decoration: none;
+        color: #fff;
+        font-weight: bold;
+        transition: color 0.4s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      nav a::after {
+        content: "";
+        display: block;
+        position: absolute;
+        bottom: -0.2rem;
+        left: 50%;
+        width: 0;
+        height: 3px;
+        background-image: linear-gradient(90deg, #3498db, #2ecc71, #3498db);
+        transition: width 0.4s ease, left 0.4s ease;
+        z-index: -1;
+      }
+
+      nav a:hover::after {
+        width: 100%;
+        left: 0;
+      }
+
+      section {
+        margin: 20px auto;
+        padding: 30px;
+        background-color: rgba(255, 255, 255, 0.95);
+        border-radius: 10px;
+        max-width: 900px;
+        transition: box-shadow 0.3s ease;
+        position: relative;
+        transition: background-color 0.3s ease;
+      }
+
+      section:hover {
+        background-color: rgba(255, 255, 255, 0.98);
+      }
+
+      @property --angle {
+        syntax: "<angle>";
+        initial-value: 0deg;
+        inherits: false;
+      }
+
+      section::after,
+      section::before {
+        content: "";
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background-image: conic-gradient(
+          from var(--angle),
+          #3498db,
+          #9b59b6,
+          #e74c3c,
+          #f1c40f,
+          #2ecc71,
+          #3498db
+        );
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: -1;
+        padding: 3px;
+        border-radius: 12px;
+        animation: 3s spin linear infinite;
+      }
+
+      @keyframes spin {
+        from {
+          --angle: 0deg;
+        }
+        to {
+          --angle: 360deg;
+        }
+      }
+
+      section::before {
+        filter: blur(1.5rem);
+        opacity: 0.5;
+      }
+
+      section:hover {
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      }
+
+      footer {
+        text-align: center;
+        padding: 10px;
+        background-color: rgba(44, 62, 80, 0.8);
+        color: #fff;
+        margin-top: auto;
+        width: 100%;
+        transition: background-color 0.3s ease;
+      }
+
+      h1 {
+        margin: 0;
+        letter-spacing: 0.15em;
+      }
+
+      h2 {
+        color: #2c3e50;
+        border-bottom: 2px solid #3498db;
+        padding-bottom: 10px;
+      }
+
+      h3 {
+        color: #34495e;
+        margin-top: 25px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+        font-size: 14px;
+      }
+
+      th, td {
+        border: 1px solid #ddd;
+        padding: 10px;
+        text-align: left;
+      }
+
+      th {
+        background-color: #3498db;
+        color: white;
+      }
+
+      tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+
+      code {
+        background-color: #f4f4f4;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-family: monospace;
+      }
+
+      .tag {
+        display: inline-block;
+        background: linear-gradient(135deg, #3498db, #2ecc71);
+        color: white;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        margin-right: 8px;
+        margin-bottom: 8px;
+      }
+
+      .date {
+        color: #7f8c8d;
+        font-size: 14px;
+      }
+
+      .blog-post {
+        margin-bottom: 40px;
+        padding-bottom: 30px;
+        border-bottom: 1px dashed #bdc3c7;
+      }
+
+      .blog-post:last-child {
+        border-bottom: none;
+      }
+
+      ul {
+        padding-left: 20px;
+      }
+
+      li {
+        margin-bottom: 8px;
+      }
+
+      a {
+        color: #3498db;
+        text-decoration: none;
+      }
+
+      a:hover {
+        text-decoration: underline;
+      }
+
+      @media (max-width: 768px) {
+        section {
+          margin: 10px;
+          padding: 20px;
+        }
+        table {
+          font-size: 12px;
+        }
+        th, td {
+          padding: 6px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="background" id="background"></div>
+    <header>
+      <h1>ML Research Notes</h1>
+      <p style="color: #ecf0f1; margin-top: 10px;">Mechanistic Interpretability & AI Safety</p>
+    </header>
+
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="#research">Research</a>
+      <a href="https://github.com/marcosantar93">GitHub</a>
+      <a href="https://x.com/marcosantar93">Twitter/X</a>
+    </nav>
+
+    <section id="research">
+      <div class="blog-post">
+        <h2>Mapping Safety Representations in LLMs</h2>
+        <p class="date">January 16, 2026</p>
+        <div>
+          <span class="tag">Mechanistic Interpretability</span>
+          <span class="tag">AI Safety</span>
+          <span class="tag">Activation Steering</span>
+        </div>
+
+        <h3>TL;DR</h3>
+        <p>
+          I'm researching how different LLMs encode safety behaviors. The same activation steering protocol
+          produces dramatically different failure modes across models: Gemma stays safe, Llama breaks but stays safe,
+          Mistral breaks AND becomes unsafe.
+        </p>
+
+        <h3>The Research Question</h3>
+        <p>
+          Can we identify and manipulate the "refusal direction" in transformer activation spaces?
+          This direction should encode the model's decision to refuse harmful requests. If we can find it,
+          we can understand how safety is implemented and potentially improve it.
+        </p>
+
+        <h3>Experimental Setup</h3>
+        <ul>
+          <li><strong>Method:</strong> Linear activation steering (adding direction vectors to residual stream)</li>
+          <li><strong>Layer:</strong> 21 (where abstract concepts are typically encoded)</li>
+          <li><strong>Steering strength:</strong> &alpha;=20.0</li>
+          <li><strong>Models:</strong> Gemma-2-9B, Llama-3.1-8B, Mistral-7B</li>
+        </ul>
+
+        <h3>Results</h3>
+        <table>
+          <tr>
+            <th>Model</th>
+            <th>Coherence</th>
+            <th>Flip Rate</th>
+            <th>Interpretation</th>
+          </tr>
+          <tr>
+            <td>Gemma-2-9B</td>
+            <td>5.0/5.0</td>
+            <td>0%</td>
+            <td><strong>Robust</strong> - maintains coherence AND safety</td>
+          </tr>
+          <tr>
+            <td>Llama-3.1-8B</td>
+            <td>2.0/5.0</td>
+            <td>0%</td>
+            <td><strong>Fails safe</strong> - breaks but stays safe</td>
+          </tr>
+          <tr>
+            <td>Mistral-7B</td>
+            <td>1.28/5.0</td>
+            <td>64%</td>
+            <td><strong>Brittle</strong> - breaks AND unsafe</td>
+          </tr>
+        </table>
+
+        <h3>What This Means</h3>
+        <p>
+          Different training approaches create qualitatively different safety representations:
+        </p>
+        <ul>
+          <li><strong>Gemma:</strong> Distributed, robust safety circuits that resist linear interventions</li>
+          <li><strong>Llama:</strong> Safety deeply entangled with capability - breaking one breaks both</li>
+          <li><strong>Mistral:</strong> Superficial safety layer that can be bypassed</li>
+        </ul>
+
+        <h3>Multi-Model Review Process</h3>
+        <p>
+          All experimental decisions are reviewed by 4 frontier LLMs in consensus:
+        </p>
+        <ul>
+          <li><strong>Claude Opus 4.5:</strong> Mechanistic interpretability review</li>
+          <li><strong>GPT-4o:</strong> Security analysis</li>
+          <li><strong>Gemini 2.5 Pro:</strong> Theoretical validity</li>
+          <li><strong>Grok-3:</strong> Methodological rigor</li>
+        </ul>
+
+        <h3>Next Steps</h3>
+        <p>
+          All reviewers identified the same critical gaps:
+        </p>
+        <ul>
+          <li>Need &alpha; sweep (not just &alpha;=20)</li>
+          <li>Need layer sweep (not just L21)</li>
+          <li>Need control vectors (random/orthogonal baselines)</li>
+          <li>Need mechanistic explanation for WHY models differ</li>
+        </ul>
+
+        <h3>Status</h3>
+        <p>
+          <strong>Current:</strong> Workshop/arXiv ready<br>
+          <strong>Target:</strong> NeurIPS Safety Workshop or similar<br>
+          <strong>Timeline:</strong> Additional experiments over next 2-3 weeks
+        </p>
+
+        <hr style="margin-top: 30px; border: none; border-top: 1px solid #ecf0f1;">
+        <p style="font-size: 14px; color: #7f8c8d;">
+          This is ongoing research. Questions or collaboration ideas?
+          Reach out on <a href="https://x.com/marcosantar93">Twitter/X</a> or
+          <a href="mailto:marcosantar93@gmail.com">email</a>.
+        </p>
+      </div>
+    </section>
+
+    <footer>
+      <p>&copy; 2026 Marco Santarcangelo. All rights reserved.</p>
+    </footer>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const background = document.getElementById("background");
+        const tileSize = 200;
+        const rows = Math.ceil(window.innerHeight / tileSize);
+        const cols = Math.ceil(window.innerWidth / tileSize);
+
+        for (let row = 0; row <= rows; row++) {
+          for (let col = 0; col <= cols; col++) {
+            const tile = document.createElement("div");
+            tile.classList.add("tile");
+            tile.style.top = `${row * tileSize}px`;
+            tile.style.left = `${col * tileSize}px`;
+            background.appendChild(tile);
+          }
+        }
+      });
+    </script>
+  </body>
+</html>
