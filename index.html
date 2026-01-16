@@ -312,6 +312,70 @@
         stroke-width: 1.5;
       }
 
+      /* Research */
+      .research-post {
+        border-left: 1px solid var(--border);
+        padding-left: 24px;
+        margin-left: 8px;
+      }
+
+      .research-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 12px;
+      }
+
+      .research-title {
+        font-weight: 400;
+        font-size: 1rem;
+      }
+
+      .research-findings {
+        margin: 16px 0;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .finding {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 12px;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        font-size: 0.875rem;
+      }
+
+      .finding-model {
+        font-weight: 500;
+        font-family: monospace;
+      }
+
+      .finding-result {
+        color: var(--text-secondary);
+        font-weight: 300;
+      }
+
+      .finding-robust { color: #22c55e; }
+      .finding-safe { color: #eab308; }
+      .finding-brittle { color: #ef4444; }
+
+      [data-theme="dark"] .finding-robust { color: #4ade80; }
+      [data-theme="dark"] .finding-safe { color: #facc15; }
+      [data-theme="dark"] .finding-brittle { color: #f87171; }
+
+      .research-status {
+        font-size: 0.8125rem;
+        color: var(--text-muted);
+        font-style: italic;
+        margin-top: 12px;
+      }
+
       /* Footer */
       footer {
         padding: 40px 0 60px;
@@ -370,6 +434,7 @@
 
       <nav>
         <a href="#about">About</a>
+        <a href="#research">Research</a>
         <a href="#skills">Skills</a>
         <a href="#experience">Experience</a>
         <a href="#education">Education</a>
@@ -386,6 +451,41 @@
           and why readable representations don't always translate to controllable behavior.
           Previously shipped production systems at Amazon and led engineering teams at startups.
         </p>
+      </section>
+
+      <section id="research">
+        <h2>Research</h2>
+        <div class="research-post">
+          <div class="research-header">
+            <span class="research-title">Mapping Safety Representations in LLMs</span>
+            <span class="timeline-date">Jan 2026</span>
+          </div>
+          <p class="timeline-desc">
+            Investigating how different LLMs encode safety behaviors through activation steering experiments.
+            Key finding: the same steering protocol produces dramatically different failure modes across models.
+          </p>
+          <div class="research-findings">
+            <div class="finding">
+              <span class="finding-model">Gemma-2-9B</span>
+              <span class="finding-result finding-robust">Robust — maintains coherence and safety</span>
+            </div>
+            <div class="finding">
+              <span class="finding-model">Llama-3.1-8B</span>
+              <span class="finding-result finding-safe">Fails safe — breaks but stays safe</span>
+            </div>
+            <div class="finding">
+              <span class="finding-model">Mistral-7B</span>
+              <span class="finding-result finding-brittle">Brittle — loses both coherence and safety</span>
+            </div>
+          </div>
+          <p class="timeline-desc" style="margin-top: 16px;">
+            Currently running systematic sweeps across layers and steering strengths to understand why.
+            Using a multi-model consensus framework (Claude, GPT-4o, Gemini, Grok) for experiment validation.
+          </p>
+          <p class="research-status">
+            Status: Running experiments — targeting workshop submission
+          </p>
+        </div>
       </section>
 
       <section id="skills">
