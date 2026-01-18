@@ -13,6 +13,8 @@ export const blogPosts: BlogPost[] = [
 
 Do different language models have different "capacities" for empathetic communication? Not whether they *feel* empathy (a philosophical question we can't answer with activation geometry), but whether their internal representations allow for richer, more nuanced encoding of empathetic language patterns.
 
+*This work was sparked by a [conversation with j⧉nus](https://x.com/repligate/status/1879968588620181698) about whether "empathetic bandwidth" in LLMs could be measured geometrically.*
+
 I measured this across five 7-9B parameter models using what I call **empathetic bandwidth** — the product of subspace dimensionality and steering range. Think of it as: how many dimensions does the model use to encode empathy, and how far can we steer along those dimensions before outputs become incoherent?
 
 ## What I Found
@@ -45,7 +47,7 @@ Steering vectors extracted from crisis support prompts transferred to technical 
 
 Models with ≥11 dimensions averaged 8.8 steering range. Those with <11 averaged 6.4. **Breadth and depth co-evolve** — if a model develops richer empathy subspaces, it also becomes more steerable along them.
 
-## Methodology (The Short Version)
+## Methodology
 
 I created 50 empathetic/neutral prompt pairs across 5 contexts:
 - Crisis support
@@ -123,6 +125,10 @@ This study measures **geometric representation of empathetic language patterns**
 5. **Synthetic data:** All samples were model-generated. While the pipeline was validated, results may not fully reflect how models respond to human-authored prompts with genuine emotional content.
 6. **Observational study:** All findings are correlational. Causal claims require interventional studies like activation patching or controlled architecture ablations.
 
+## What's Next
+
+**Running the human eval now.** Does bandwidth actually predict human-rated empathy? I'm collecting ratings on steered outputs to test if geometric bandwidth correlates with perceived helpfulness in real conversations.
+
 ## Future Work
 
 **Causal Intervention via Activation Patching**
@@ -133,9 +139,6 @@ Does empathy emerge gradually across layers, or concentrate in specific regions?
 
 **Scaling to Larger Models**
 Do 70B+ models show even higher bandwidth? Or do they hit diminishing returns?
-
-**Human Evaluation of Steered Outputs**
-Does higher bandwidth = more helpful responses? Need human judges to rate steered completions.
 
 ## Practical Implications
 
@@ -150,7 +153,9 @@ If you're building applications requiring empathetic communication:
 
 ---
 
-*Full technical report and code: [GitHub - Crystallized Safety](https://github.com/marcosantar93/crystallized-safety)*
+*Full methodology details and code: [GitHub - Crystallized Safety](https://github.com/marcosantar93/crystallized-safety)*
+
+*Thanks to [j⧉nus](https://x.com/repligate) for the conversation that sparked this work.*
     `,
   },
 ];
