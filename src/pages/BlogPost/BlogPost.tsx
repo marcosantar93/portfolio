@@ -1,5 +1,6 @@
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { blogPosts } from '../../content/blog';
 import styles from './BlogPost.module.css';
 
@@ -68,8 +69,38 @@ const BlogPost: React.FC = () => {
     );
   }
 
+  const pageTitle = `${post.title} | Marco Santar`;
+  const pageUrl = `https://marcosantar.com/blog/${post.slug}`;
+
   return (
     <div className={styles.blogPost}>
+      <Helmet>
+        <title>{pageTitle}</title>
+        <meta name="description" content={post.excerpt} />
+        <meta name="keywords" content={post.tags.join(', ')} />
+
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content="article" />
+        <meta property="og:url" content={pageUrl} />
+        <meta property="og:title" content={post.title} />
+        <meta property="og:description" content={post.excerpt} />
+        <meta property="article:published_time" content={post.date} />
+        <meta property="article:author" content="Marco Santar" />
+        {post.tags.map(tag => (
+          <meta key={tag} property="article:tag" content={tag} />
+        ))}
+
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content={pageUrl} />
+        <meta name="twitter:title" content={post.title} />
+        <meta name="twitter:description" content={post.excerpt} />
+        <meta name="twitter:creator" content="@marcosantar93" />
+
+        {/* Canonical URL */}
+        <link rel="canonical" href={pageUrl} />
+      </Helmet>
+
       <Link to="/blog" className={styles.backLink}>
         ← Back to Blog
       </Link>

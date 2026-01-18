@@ -1,11 +1,18 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { blogPosts } from '../../content/blog';
 import styles from './Blog.module.css';
 
 const Blog: React.FC = () => {
   return (
     <div className={styles.blog}>
+      <Helmet>
+        <title>Blog | Marco Santar</title>
+        <meta name="description" content="Thoughts and findings on mechanistic interpretability, LLM safety, and AI research by Marco Santar." />
+        <link rel="canonical" href="https://marcosantar.com/blog" />
+      </Helmet>
+
       <h1 className={styles.pageTitle}>Blog</h1>
       <p className={styles.description}>
         Thoughts and findings on mechanistic interpretability, LLM safety, and AI research.
