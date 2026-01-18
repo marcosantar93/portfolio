@@ -17,7 +17,7 @@ I measured this across five 7-9B parameter models using what I call **empathetic
 
 ## What I Found
 
-**Gemma2-9B leads with 136.6 bandwidth** (16 dimensions × 8.5 steering range), while Mistral-7B shows just 36.3. That's **109% variation** — nearly 4x difference in empathetic representational capacity.
+**Gemma2-9B leads with 136.6 bandwidth** (16 dimensions × 8.5 steering range), while Mistral-7B shows just 36.3. That's a **3.8x difference** in empathetic representational capacity—a substantial variation across models of similar size.
 
 ### Key Results
 
@@ -29,7 +29,7 @@ I measured this across five 7-9B parameter models using what I call **empathetic
 | Qwen2.5-7B | 67.3 | 10 | 6.7 | 0.835 |
 | Mistral-7B | 36.3 | 6 | 6.0 | 0.829 |
 
-**Effect size: Cohen's d = 2.41** (large). This isn't noise — it's a fundamental architectural difference.
+**Effect size: Cohen's d = 2.41** (large by conventional standards). This isn't noise — it's a **substantial difference in how these models represent empathetic language**, likely stemming from differences in architecture, training data, or fine-tuning procedures.
 
 ## Why This Matters
 
@@ -65,11 +65,13 @@ For each model, I:
 
 Total: 18,100 samples across 5 models.
 
+**Important:** All samples were model-generated using a validated synthetic data pipeline. This enables controlled experimentation at scale, but results should be confirmed with human-authored prompts and human evaluations of output quality.
+
 ## Five Findings
 
-### Finding 1: Models Vary 109% in Empathetic Bandwidth
+### Finding 1: Models Vary 3.8x in Empathetic Bandwidth
 
-Gemma2-9B (136.6) vs. Mistral-7B (36.3). This isn't marginal — it's a qualitatively different representational architecture.
+Gemma2-9B (136.6) vs. Mistral-7B (36.3). This isn't marginal — it's a **qualitatively different representational capacity**, suggesting these models encode empathy in fundamentally distinct ways.
 
 **Implication:** For applications requiring nuanced empathetic responses (crisis support, therapy assistants, educational scaffolding), model choice matters dramatically.
 
@@ -77,7 +79,7 @@ Gemma2-9B (136.6) vs. Mistral-7B (36.3). This isn't marginal — it's a qualitat
 
 Models don't trade off breadth for depth. High-dimensional models (Gemma2, Llama-3.1) also show high steering ranges. **Both properties co-evolve.**
 
-**Speculation:** Training dynamics may reward models that develop multi-dimensional empathy subspaces *and* make them steerable. Models with richer representations are inherently more controllable.
+**Speculation:** The correlation between dimensionality and steering range suggests these properties may develop together, though we cannot determine causality from this data alone. Whether richer representations are inherently more controllable would require ablation studies manipulating dimensionality directly.
 
 ### Finding 3: Empathy ≠ Syntax
 
@@ -87,15 +89,15 @@ Syntactic complexity (formal vs. casual) averaged 33.1 bandwidth. Empathy averag
 
 ### Finding 4: SAE Validates PCA
 
-80% of models showed agreement between Sparse Autoencoder active features and PCA-derived dimensionality. This suggests the measured subspaces reflect **genuine structure**, not noise artifacts from linear decomposition.
+80% of models showed agreement between Sparse Autoencoder active features and PCA-derived dimensionality. This suggests the measured subspaces reflect **statistically robust patterns**, not noise artifacts from linear decomposition.
 
-**Why this matters:** PCA could in theory just be overfitting noise in high-dimensional spaces. SAE cross-validation confirms the dimensions are interpretable features.
+**Why this matters:** PCA could in theory just be overfitting noise in high-dimensional spaces. SAE cross-validation confirms the linear dimensions are interpretable, though PCA may still miss nonlinear empathy encoding.
 
 ### Finding 5: Empathy Generalizes Across Contexts
 
-87% transfer success rate when steering vectors from crisis support → technical assistance. **Models encode abstract empathetic "directions"** rather than context-specific patterns.
+87% transfer success rate when steering vectors from crisis support → technical assistance. Models encode **generalizable patterns** that transfer across contexts, suggesting empathetic representations aren't purely context-specific—though whether these are truly "abstract" or simply domain-general politeness patterns remains an open question.
 
-**Practical impact:** You can extract empathy vectors from any context and apply them elsewhere. The representation is portable.
+**Practical impact:** You can extract empathy vectors from any context and apply them elsewhere with reasonable success.
 
 ## What We're NOT Claiming
 
@@ -105,15 +107,19 @@ This study measures **geometric representation of empathetic language patterns**
 - ❌ Whether outputs are actually helpful to humans (requires human eval)
 - ❌ Moral/ethical dimensions of empathy
 - ❌ Whether models "understand" empathy in a human sense
+- ❌ That higher bandwidth guarantees better empathetic outputs (requires human evaluation)
+- ❌ That bandwidth differences stem specifically from architecture vs. training data vs. fine-tuning
 
 **What we CAN say:** Some models have richer internal representations for empathetic communication. Whether that makes their outputs more helpful is an empirical question requiring human studies.
 
 ## Limitations
 
-1. **Coherence threshold:** The 0.7 cutoff is somewhat arbitrary. Sensitivity analysis across multiple thresholds would strengthen findings.
-2. **PCA assumptions:** Linear dimensionality reduction may miss non-linear structure. (SAE validation helps, but doesn't fully resolve this.)
+1. **Coherence threshold:** The 0.7 cutoff is somewhat arbitrary. Sensitivity analysis across multiple thresholds would strengthen findings. Coherence measures grammaticality/topicality, not empathetic helpfulness.
+2. **PCA assumptions:** Linear dimensionality reduction will miss non-linear structure. SAE validation confirms linear dimensions are interpretable, but empathy may also be encoded in nonlinear manifolds we're not measuring.
 3. **Model selection:** Limited to 7-9B open-weight models. Larger models (70B+) may show different patterns.
 4. **Prompt diversity:** 50 pairs provide good coverage but more diverse scenarios would strengthen generalization claims.
+5. **Synthetic data:** All samples were model-generated. While the pipeline was validated, results may not fully reflect how models respond to human-authored prompts with genuine emotional content.
+6. **Observational study:** All findings are correlational. Causal claims require interventional studies like activation patching or controlled architecture ablations.
 
 ## Future Work
 
@@ -133,7 +139,7 @@ Does higher bandwidth = more helpful responses? Need human judges to rate steere
 
 If you're building applications requiring empathetic communication:
 
-1. **Gemma2-9B and Llama-3.1-8B** have 3-4x the empathetic bandwidth of Mistral-7B
+1. **Gemma2-9B and Llama-3.1-8B** have 3-4x the empathetic bandwidth of Mistral-7B (Note: Higher bandwidth suggests richer internal representations, but output quality should be validated with human evaluations before deploying in sensitive applications like crisis support)
 2. Steering vectors **transfer across contexts** — extract once, apply anywhere
 3. Models with high dimensionality (≥11) tend to have wider steering ranges
 4. Empathy bandwidth is **2.8x larger than syntactic complexity** — this isn't just general model quality
