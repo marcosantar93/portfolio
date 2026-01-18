@@ -1,46 +1,51 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
   <rect width="512" height="512" fill="#0a0a0a" rx="80"/>
 
-  <!-- Neural network nodes -->
-  <!-- Input layer -->
-  <circle cx="120" cy="180" r="16" fill="#3b82f6" opacity="0.8"/>
-  <circle cx="120" cy="256" r="16" fill="#3b82f6" opacity="0.8"/>
-  <circle cx="120" cy="332" r="16" fill="#3b82f6" opacity="0.8"/>
+  <!-- Central hub neuron -->
+  <circle cx="256" cy="256" r="32" fill="#3b82f6" opacity="1">
+    <animate attributeName="opacity" values="0.8;1;0.8" dur="2s" repeatCount="indefinite"/>
+  </circle>
 
-  <!-- Hidden layer 1 -->
-  <circle cx="230" cy="140" r="16" fill="#3b82f6" opacity="0.9"/>
-  <circle cx="230" cy="220" r="16" fill="#3b82f6" opacity="0.9"/>
-  <circle cx="230" cy="292" r="16" fill="#3b82f6" opacity="0.9"/>
-  <circle cx="230" cy="372" r="16" fill="#3b82f6" opacity="0.9"/>
+  <!-- Ring of connected neurons -->
+  <g opacity="0.9">
+    <!-- Top -->
+    <circle cx="256" cy="120" r="20" fill="#3b82f6"/>
+    <line x1="256" y1="140" x2="256" y2="224" stroke="#3b82f6" stroke-width="3" opacity="0.4"/>
 
-  <!-- Hidden layer 2 -->
-  <circle cx="340" cy="180" r="16" fill="#3b82f6" opacity="0.9"/>
-  <circle cx="340" cy="256" r="16" fill="#3b82f6" opacity="0.9"/>
-  <circle cx="340" cy="332" r="16" fill="#3b82f6" opacity="0.9"/>
+    <!-- Top-right -->
+    <circle cx="370" cy="180" r="20" fill="#3b82f6"/>
+    <line x1="352" y1="194" x2="280" y2="240" stroke="#3b82f6" stroke-width="3" opacity="0.4"/>
 
-  <!-- Output layer -->
-  <circle cx="450" cy="220" r="16" fill="#3b82f6"/>
-  <circle cx="450" cy="292" r="16" fill="#3b82f6"/>
+    <!-- Right -->
+    <circle cx="392" cy="256" r="20" fill="#3b82f6"/>
+    <line x1="372" y1="256" x2="288" y2="256" stroke="#3b82f6" stroke-width="3" opacity="0.4"/>
 
-  <!-- Connections (input to hidden1) -->
-  <line x1="136" y1="180" x2="214" y2="140" stroke="#3b82f6" stroke-width="2" opacity="0.3"/>
-  <line x1="136" y1="180" x2="214" y2="220" stroke="#3b82f6" stroke-width="2" opacity="0.3"/>
-  <line x1="136" y1="256" x2="214" y2="220" stroke="#3b82f6" stroke-width="2" opacity="0.3"/>
-  <line x1="136" y1="256" x2="214" y2="292" stroke="#3b82f6" stroke-width="2" opacity="0.3"/>
-  <line x1="136" y1="332" x2="214" y2="292" stroke="#3b82f6" stroke-width="2" opacity="0.3"/>
-  <line x1="136" y1="332" x2="214" y2="372" stroke="#3b82f6" stroke-width="2" opacity="0.3"/>
+    <!-- Bottom-right -->
+    <circle cx="370" cy="332" r="20" fill="#3b82f6"/>
+    <line x1="352" y1="318" x2="280" y2="272" stroke="#3b82f6" stroke-width="3" opacity="0.4"/>
 
-  <!-- Connections (hidden1 to hidden2) -->
-  <line x1="246" y1="140" x2="324" y2="180" stroke="#3b82f6" stroke-width="2" opacity="0.3"/>
-  <line x1="246" y1="220" x2="324" y2="180" stroke="#3b82f6" stroke-width="2" opacity="0.4"/>
-  <line x1="246" y1="220" x2="324" y2="256" stroke="#3b82f6" stroke-width="2" opacity="0.4"/>
-  <line x1="246" y1="292" x2="324" y2="256" stroke="#3b82f6" stroke-width="2" opacity="0.4"/>
-  <line x1="246" y1="292" x2="324" y2="332" stroke="#3b82f6" stroke-width="2" opacity="0.4"/>
-  <line x1="246" y1="372" x2="324" y2="332" stroke="#3b82f6" stroke-width="2" opacity="0.3"/>
+    <!-- Bottom -->
+    <circle cx="256" cy="392" r="20" fill="#3b82f6"/>
+    <line x1="256" y1="372" x2="256" y2="288" stroke="#3b82f6" stroke-width="3" opacity="0.4"/>
 
-  <!-- Connections (hidden2 to output) -->
-  <line x1="356" y1="180" x2="434" y2="220" stroke="#3b82f6" stroke-width="2" opacity="0.4"/>
-  <line x1="356" y1="256" x2="434" y2="220" stroke="#3b82f6" stroke-width="2" opacity="0.5"/>
-  <line x1="356" y1="256" x2="434" y2="292" stroke="#3b82f6" stroke-width="2" opacity="0.5"/>
-  <line x1="356" y1="332" x2="434" y2="292" stroke="#3b82f6" stroke-width="2" opacity="0.4"/>
+    <!-- Bottom-left -->
+    <circle cx="142" cy="332" r="20" fill="#3b82f6"/>
+    <line x1="160" y1="318" x2="232" y2="272" stroke="#3b82f6" stroke-width="3" opacity="0.4"/>
+
+    <!-- Left -->
+    <circle cx="120" cy="256" r="20" fill="#3b82f6"/>
+    <line x1="140" y1="256" x2="224" y2="256" stroke="#3b82f6" stroke-width="3" opacity="0.4"/>
+
+    <!-- Top-left -->
+    <circle cx="142" cy="180" r="20" fill="#3b82f6"/>
+    <line x1="160" y1="194" x2="232" y2="240" stroke="#3b82f6" stroke-width="3" opacity="0.4"/>
+  </g>
+
+  <!-- Outer connections (ring to ring) -->
+  <g opacity="0.2">
+    <path d="M 256 140 Q 313 150 352 194" stroke="#3b82f6" stroke-width="2" fill="none"/>
+    <path d="M 352 318 Q 313 362 256 372" stroke="#3b82f6" stroke-width="2" fill="none"/>
+    <path d="M 160 318 Q 199 362 256 372" stroke="#3b82f6" stroke-width="2" fill="none"/>
+    <path d="M 160 194 Q 199 150 256 140" stroke="#3b82f6" stroke-width="2" fill="none"/>
+  </g>
 </svg>
