@@ -60,7 +60,7 @@ For each model, I:
 2. **Ran PCA** on empathetic activations to measure effective dimensionality (90% variance threshold)
 3. **Extracted steering vectors** (mean difference between empathetic/neutral) and tested coefficients from -20 to +20
 4. **Measured coherence** at each steering level; max α where coherence > 0.7 = steering range
-5. **Validated with Sparse Autoencoders** (SAE) to confirm PCA isn't just capturing noise
+5. **Validated with Sparse Autoencoders** (SAE) to confirm PCA isn't just capturing noise (SAEs decompose activations into interpretable features—see Finding 4)
 6. **Tested transfer** by applying crisis support vectors to technical assistance
 
 Total: 18,100 samples across 5 models.
@@ -91,7 +91,9 @@ Syntactic complexity (formal vs. casual) averaged 33.1 bandwidth. Empathy averag
 
 80% of models showed agreement between Sparse Autoencoder active features and PCA-derived dimensionality. This suggests the measured subspaces reflect **statistically robust patterns**, not noise artifacts from linear decomposition.
 
-**Why this matters:** PCA could in theory just be overfitting noise in high-dimensional spaces. SAE cross-validation confirms the linear dimensions are interpretable, though PCA may still miss nonlinear empathy encoding.
+**What are SAEs?** Sparse Autoencoders decompose LLM activations into interpretable features. Unlike PCA's linear projections, SAEs learn a dictionary of atomic features by encoding activations into a much larger space (e.g., 4096 → 32k dimensions) with a sparsity penalty—only a few features activate at once. This forces the model to learn disentangled concepts instead of superpositions.
+
+**Why this matters:** PCA could in theory just be overfitting noise in high-dimensional spaces. SAE cross-validation confirms the linear dimensions are interpretable—if PCA found 14 dimensions for Llama-3.1-8B and the SAE decomposition shows ~14 distinct empathy-related features activating, that's independent evidence the structure is real. Though PCA may still miss nonlinear empathy encoding.
 
 ### Finding 5: Empathy Generalizes Across Contexts
 
