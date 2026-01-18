@@ -1,0 +1,44 @@
+.experience {
+  max-width: 100%;
+  position: relative;
+}
+
+.timelineProgress {
+  position: fixed;
+  left: calc(50% - 360px + 24px - 1px);
+  top: 120px;
+  width: 2px;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    var(--accent-color) 10%,
+    var(--accent-color) 90%,
+    transparent
+  );
+  box-shadow: 0 0 10px var(--accent-color);
+  pointer-events: none;
+  z-index: 1;
+  transition: height 0.1s ease-out;
+}
+
+.pageTitle {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 40px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  position: relative;
+  z-index: 2;
+}
+
+@media (max-width: 640px) {
+  .pageTitle {
+    font-size: 0.7rem;
+    margin-bottom: 32px;
+  }
+
+  .timelineProgress {
+    left: calc(50% - 50vw + 24px + 24px - 1px);
+  }
+}

@@ -1,0 +1,23 @@
+.timeline {
+  position: relative;
+  margin: 32px 0;
+  padding-left: 24px;
+  border-left: 1px solid var(--border-color);
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: -1px;
+  top: 0;
+  width: 1px;
+  height: 100%;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    var(--accent-color) 20%,
+    var(--accent-color) 80%,
+    transparent
+  );
+  opacity: 0.3;
+}

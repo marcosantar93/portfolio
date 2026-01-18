@@ -1,0 +1,19 @@
+.skillTag {
+  display: inline-block;
+  padding: 10px 18px;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 24px;
+  font-size: 0.875rem;
+  font-weight: 300;
+  color: var(--text-color);
+  transition: all var(--transition);
+  letter-spacing: 0.01em;
+}
+
+.skillTag:hover {
+  border-color: var(--accent-color);
+  transform: translateY(-1px);
+  box-shadow: 0 0 8px rgba(59, 130, 246, 0.3),
+              0 0 16px rgba(59, 130, 246, 0.15);
+}

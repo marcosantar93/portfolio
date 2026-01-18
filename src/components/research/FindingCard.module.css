@@ -1,0 +1,51 @@
+.findingCard {
+  position: relative;
+  padding: 16px;
+  padding-left: 24px;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  margin-bottom: 12px;
+}
+
+.statusIndicator {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  border-radius: var(--border-radius) 0 0 var(--border-radius);
+}
+
+.findingCard.success .statusIndicator {
+  background-color: var(--status-success);
+}
+
+.findingCard.warning .statusIndicator {
+  background-color: var(--status-warning);
+}
+
+.findingCard.error .statusIndicator {
+  background-color: var(--status-error);
+}
+
+.findingCard.info .statusIndicator {
+  background-color: var(--status-info);
+}
+
+.content {
+  padding-left: 8px;
+}
+
+.title {
+  font-size: 1rem;
+  font-weight: var(--font-weight-bold);
+  color: var(--text-color);
+  margin-bottom: 8px;
+}
+
+.description {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}

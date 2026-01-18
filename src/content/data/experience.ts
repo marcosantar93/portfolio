@@ -1,0 +1,68 @@
+import { ExperienceItem } from '../../types';
+
+export const experienceData: ExperienceItem[] = [
+  {
+    id: 'scale-ai',
+    title: 'Robotics & CV Engineer',
+    company: 'Scale AI',
+    period: 'Dec 2024 — Present',
+    description: 'Working on robotics and computer vision solutions for AI training data.',
+    skills: ['Python', 'Computer Vision', 'ROS', 'PyTorch'],
+  },
+  {
+    id: 'caylent',
+    title: 'Cloud Engineer',
+    company: 'Caylent',
+    period: 'Jan 2024 — Dec 2024',
+    description: 'Designed and implemented cloud infrastructure solutions for enterprise clients using AWS services.',
+    skills: ['AWS', 'Kubernetes', 'Docker', 'Terraform'],
+  },
+  {
+    id: 'amazon',
+    title: 'Software Development Engineer',
+    company: 'Amazon',
+    period: 'Jun 2022 — Jun 2023',
+    description: 'Developed scalable backend services and APIs for Amazon\'s e-commerce platform.',
+    skills: ['Java', 'AWS', 'DynamoDB', 'TypeScript'],
+  },
+  {
+    id: 'zksystems',
+    title: 'Full Stack Developer & Tech Lead',
+    company: 'ZkSystems',
+    period: 'Mar 2021 — Jun 2022',
+    description: 'Led development team building web applications and managed technical architecture decisions.',
+    skills: ['TypeScript', 'React', 'Node.js', 'PostgreSQL'],
+  },
+  {
+    id: 'rebellion-pay',
+    title: 'Full Stack Developer',
+    company: 'Rebellion Pay',
+    period: 'Jun 2020 — Mar 2021',
+    description: 'Developed fintech applications with focus on payment processing and security.',
+    skills: ['React', 'Node.js', 'MongoDB', 'Stripe'],
+  },
+  {
+    id: 'freelance',
+    title: 'Front-end Developer',
+    company: 'Freelance',
+    period: 'Jun 2019 — Jun 2020',
+    description: 'Built responsive web applications for various clients across different industries.',
+    skills: ['React', 'TypeScript', 'CSS', 'JavaScript'],
+  },
+  {
+    id: 'sysone',
+    title: 'Mobile & Backend Developer',
+    company: 'SysOne',
+    period: 'Feb 2019 — Jun 2019',
+    description: 'Developed mobile applications and backend APIs for enterprise solutions.',
+    skills: ['React Native', 'Node.js', 'PostgreSQL', 'REST APIs'],
+  },
+  {
+    id: 'wehaus',
+    title: 'IoT & Computer Vision Developer',
+    company: 'WeHaus IoT',
+    period: 'Jan 2018 — Feb 2019',
+    description: 'Implemented IoT solutions and computer vision systems for smart home automation.',
+    skills: ['Python', 'Computer Vision', 'IoT', 'Embedded Systems'],
+  },
+];

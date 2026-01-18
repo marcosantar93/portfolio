@@ -1,0 +1,35 @@
+/* Light Theme */
+[data-theme='light'] {
+  --bg-color: #ffffff;
+  --card-bg: #fafafa;
+  --text-color: #171717;
+  --text-secondary: #737373;
+  --border-color: #e5e5e5;
+  --accent-color: #2563eb;
+  --accent-hover: #1d4ed8;
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --shadow-hover: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --nav-bg: rgba(255, 255, 255, 0.8);
+}
+
+/* Dark Theme */
+[data-theme='dark'] {
+  --bg-color: #0a0a0a;
+  --card-bg: #1a1a1a;
+  --text-color: #e5e5e5;
+  --text-secondary: #a3a3a3;
+  --border-color: #2a2a2a;
+  --accent-color: #3b82f6;
+  --accent-hover: #60a5fa;
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  --shadow-hover: 0 4px 6px rgba(0, 0, 0, 0.6);
+  --nav-bg: rgba(10, 10, 10, 0.8);
+}
+
+/* Status Colors */
+:root {
+  --status-success: #22c55e;
+  --status-warning: #f59e0b;
+  --status-error: #ef4444;
+  --status-info: #3b82f6;
+}

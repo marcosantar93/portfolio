@@ -1,0 +1,77 @@
+.navigation {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background-color: var(--nav-bg);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.navContent {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 20px var(--padding);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 32px;
+  position: relative;
+}
+
+.navLinks {
+  display: flex;
+  gap: 32px;
+  align-items: center;
+}
+
+.navLink {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-weight: var(--font-weight-base);
+  font-size: 0.9rem;
+  transition: color var(--transition);
+  position: relative;
+  letter-spacing: 0.02em;
+}
+
+.navLink:hover {
+  color: var(--text-color);
+}
+
+.navLink.active {
+  color: var(--text-color);
+}
+
+.navLink.active::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background-color: var(--text-color);
+}
+
+/* Position theme toggle absolutely on the right */
+.navContent > :last-child {
+  position: absolute;
+  right: var(--padding);
+}
+
+@media (max-width: 640px) {
+  .navContent {
+    padding: 16px var(--padding);
+    gap: 20px;
+  }
+
+  .navLinks {
+    gap: 20px;
+    font-size: 0.85rem;
+  }
+
+  .navLink.active::after {
+    bottom: -4px;
+  }
+}
