@@ -3,6 +3,53 @@ import { useParams, Link } from 'react-router-dom';
 import { blogPosts } from '../../content/blog';
 import styles from './BlogPost.module.css';
 
+// Simple markdown renderer with table support
+const renderMarkdown = (markdown: string): string => {
+  let html = markdown;
+
+  // Handle tables
+  const tableRegex = /\|(.+)\|\n\|[-:\s|]+\|\n((?:\|.+\|\n?)+)/g;
+  html = html.replace(tableRegex, (match, header, rows) => {
+    const headers = header.split('|').filter((h: string) => h.trim()).map((h: string) => `<th>${h.trim()}</th>`).join('');
+    const rowsHtml = rows.trim().split('\n').map((row: string) => {
+      const cells = row.split('|').filter((c: string) => c.trim()).map((c: string) => `<td>${c.trim()}</td>`).join('');
+      return `<tr>${cells}</tr>`;
+    }).join('');
+    return `<table><thead><tr>${headers}</tr></thead><tbody>${rowsHtml}</tbody></table>`;
+  });
+
+  return html
+    // Horizontal rules
+    .replace(/^---$/gim, '<hr>')
+    // Headers
+    .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+    .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+    .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+    // Bold
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    // Italic
+    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+    // Links
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>')
+    // Code blocks
+    .replace(/```([^`]+)```/g, '<pre><code>$1</code></pre>')
+    // Inline code
+    .replace(/`([^`]+)`/g, '<code>$1</code>')
+    // Unordered lists
+    .replace(/^\- (.*$)/gim, '<li>$1</li>')
+    .replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>')
+    // Numbered lists
+    .replace(/^\d+\. (.*$)/gim, '<li>$1</li>')
+    .replace(/(<li>.*<\/li>)/s, '<ol>$1</ol>')
+    // Paragraphs
+    .replace(/\n\n/g, '</p><p>')
+    .replace(/^(?!<[hultpre]|<\/[hultpre]|<li|<table|<hr)(.*$)/gim, '<p>$1</p>')
+    // Cleanup
+    .replace(/<p><\/p>/g, '')
+    .replace(/<p>(<[hultpre])/g, '$1')
+    .replace(/(<\/[hultpre]>)<\/p>/g, '$1');
+};
+
 const BlogPost: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const post = blogPosts.find(p => p.slug === slug);
@@ -46,11 +93,16 @@ const BlogPost: React.FC = () => {
         </header>
 
         <div className={styles.content}>
-          <p>{post.excerpt}</p>
-
-          <p className={styles.comingSoon}>
-            Full blog post content coming soon. This is a placeholder for the complete article.
-          </p>
+          {post.content ? (
+            <div dangerouslySetInnerHTML={{ __html: renderMarkdown(post.content) }} />
+          ) : (
+            <>
+              <p>{post.excerpt}</p>
+              <p className={styles.comingSoon}>
+                Full blog post content coming soon. This is a placeholder for the complete article.
+              </p>
+            </>
+          )}
         </div>
       </article>
     </div>

@@ -126,6 +126,62 @@
   padding: 0;
 }
 
+.content a {
+  color: var(--accent-color);
+  text-decoration: none;
+  transition: color var(--transition);
+}
+
+.content a:hover {
+  color: var(--accent-hover);
+  text-decoration: underline;
+}
+
+.content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 24px;
+  font-size: 0.9rem;
+}
+
+.content thead {
+  background-color: var(--card-bg);
+}
+
+.content th {
+  padding: 12px;
+  text-align: left;
+  font-weight: 500;
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+}
+
+.content td {
+  padding: 12px;
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+}
+
+.content tbody tr:hover {
+  background-color: rgba(59, 130, 246, 0.02);
+}
+
+.content strong {
+  font-weight: 500;
+  color: var(--text-color);
+}
+
+.content em {
+  font-style: italic;
+  color: var(--text-secondary);
+}
+
+.content hr {
+  border: none;
+  border-top: 1px solid var(--border-color);
+  margin: 48px 0;
+}
+
 .notFound {
   color: var(--text-secondary);
   font-size: 1rem;
