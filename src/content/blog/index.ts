@@ -125,11 +125,10 @@ This study measures **geometric representation of empathetic language patterns**
 5. **Synthetic data:** All samples were model-generated. While the pipeline was validated, results may not fully reflect how models respond to human-authored prompts with genuine emotional content.
 6. **Observational study:** All findings are correlational. Causal claims require interventional studies like activation patching or controlled architecture ablations.
 
-## What's Next
-
-**Running the human eval now.** Does bandwidth actually predict human-rated empathy? I'm collecting ratings on steered outputs to test if geometric bandwidth correlates with perceived helpfulness in real conversations.
-
 ## Future Work
+
+**Human Evaluation of Steered Outputs**
+Does higher bandwidth predict more helpful responses? Need human judges to rate steered completions to validate whether geometric bandwidth correlates with perceived empathy.
 
 **Causal Intervention via Activation Patching**
 Can we *ablate* empathy dimensions and observe degraded empathetic responses? Would validate that these dimensions are causally relevant.
