@@ -152,7 +152,9 @@ If you're building applications requiring empathetic communication:
 
 ---
 
-*Full methodology details and code: [GitHub - Crystallized Safety](https://github.com/marcosantar93/crystallized-safety)*
+*Full methodology details, code, and reproduction instructions: [GitHub - Empathetic Language Bandwidth](https://github.com/marcosantar93/empathetic-language-bandwidth)*
+
+*Full technical report: [Measuring Empathetic Language Encoding in LLMs (PDF)](https://github.com/marcosantar93/empathetic-language-bandwidth/blob/main/results/empathy/empathy_geometry_report.pdf)*
 
 *Thanks to [j⧉nus](https://x.com/repligate) for the conversation that sparked this work.*
     `,
