@@ -10,8 +10,8 @@ export const en = {
 
   // Home Page
   home: {
-    pageTitle: 'Marco Santar - Robotics & CV Engineer',
-    metaDescription: 'Marco Santar - Robotics & CV Engineer, ML researcher, and full-stack developer. Exploring mechanistic interpretability and LLM safety.',
+    pageTitle: 'Marco Santarcangelo Zazzetta - Robotics & CV Engineer',
+    metaDescription: 'Marco Santarcangelo Zazzetta - Robotics & CV Engineer, ML researcher, and full-stack developer. Exploring mechanistic interpretability and LLM safety.',
     aboutTitle: 'About',
     skillsTitle: 'Skills',
     aboutText: `I'm a Robotics & CV Engineer at Scale AI with a deep interest in mechanistic interpretability and understanding how neural networks actually work. My background spans computer vision, full-stack development, and cloud infrastructure, but I'm most excited about probing the inner workings of language models and exploring safety mechanisms in AI systems.
@@ -95,7 +95,7 @@ Currently experimenting with activation steering and representation analysis in 
   // Blog Page
   blog: {
     pageTitle: 'Blog',
-    metaDescription: 'Thoughts and findings on mechanistic interpretability, LLM safety, and AI research by Marco Santar.',
+    metaDescription: 'Thoughts and findings on mechanistic interpretability, LLM safety, and AI research by Marco Santarcangelo Zazzetta.',
     description: 'Thoughts and findings on mechanistic interpretability, LLM safety, and AI research.',
     noPosts: 'No blog posts yet. Check back soon!',
   },

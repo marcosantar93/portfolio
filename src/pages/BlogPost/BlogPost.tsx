@@ -69,7 +69,7 @@ const BlogPost: React.FC = () => {
     );
   }
 
-  const pageTitle = `${post.title} | Marco Santar`;
+  const pageTitle = `${post.title} | Marco Santarcangelo Zazzetta`;
   const pageUrl = `https://marcosantar.com/blog/${post.slug}`;
 
   return (
@@ -85,7 +85,7 @@ const BlogPost: React.FC = () => {
         <meta property="og:title" content={post.title} />
         <meta property="og:description" content={post.excerpt} />
         <meta property="article:published_time" content={post.date} />
-        <meta property="article:author" content="Marco Santar" />
+        <meta property="article:author" content="Marco Santarcangelo Zazzetta" />
         {post.tags.map(tag => (
           <meta key={tag} property="article:tag" content={tag} />
         ))}

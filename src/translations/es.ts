@@ -10,8 +10,8 @@ export const es = {
 
   // Página de Inicio
   home: {
-    pageTitle: 'Marco Santar - Ingeniero en Robótica y CV',
-    metaDescription: 'Marco Santar - Ingeniero en Robótica y CV, investigador de ML, y desarrollador full-stack. Explorando interpretabilidad mecanística y seguridad en LLMs.',
+    pageTitle: 'Marco Santarcangelo Zazzetta - Ingeniero en Robótica y CV',
+    metaDescription: 'Marco Santarcangelo Zazzetta - Ingeniero en Robótica y CV, investigador de ML, y desarrollador full-stack. Explorando interpretabilidad mecanística y seguridad en LLMs.',
     aboutTitle: 'Acerca de',
     skillsTitle: 'Habilidades',
     aboutText: `Soy Ingeniero en Robótica y CV en Scale AI con un profundo interés en la interpretabilidad mecanística y en comprender cómo funcionan realmente las redes neuronales. Mi experiencia abarca visión por computadora, desarrollo full-stack e infraestructura en la nube, pero lo que más me entusiasma es explorar el funcionamiento interno de los modelos de lenguaje y los mecanismos de seguridad en sistemas de IA.
@@ -95,7 +95,7 @@ Actualmente experimento con dirección de activaciones y análisis de representa
   // Página de Blog
   blog: {
     pageTitle: 'Blog',
-    metaDescription: 'Reflexiones y hallazgos sobre interpretabilidad mecanística, seguridad en LLMs e investigación en IA por Marco Santar.',
+    metaDescription: 'Reflexiones y hallazgos sobre interpretabilidad mecanística, seguridad en LLMs e investigación en IA por Marco Santarcangelo Zazzetta.',
     description: 'Reflexiones y hallazgos sobre interpretabilidad mecanística, seguridad en LLMs e investigación en IA.',
     noPosts: '¡Aún no hay publicaciones! Vuelve pronto.',
   },

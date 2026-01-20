@@ -77,4 +77,8 @@
   .navLink.active::after {
     bottom: -4px;
   }
+
+  .controls {
+    gap: 12px;
+  }
 }

@@ -8,9 +8,9 @@ const Header: React.FC = () => {
   return (
     <header className={styles.header}>
       <div className={styles.profileImage}>
-        <img src="/assets/images/profile.jpg" alt="Marco Santar" />
+        <img src="/assets/images/profile.jpg" alt="Marco Santarcangelo Zazzetta" />
       </div>
-      <h1 className={styles.name}>Marco Santarcangelo</h1>
+      <h1 className={styles.name}>Marco Santarcangelo Zazzetta</h1>
       <p className={styles.title}>{t.home.titles[0]}</p>
     </header>
   );
