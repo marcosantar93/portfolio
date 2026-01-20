@@ -1,15 +1,19 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import ThemeToggle from '../ThemeToggle/ThemeToggle';
+import LanguageSelector from '../LanguageSelector/LanguageSelector';
+import { useTranslation } from '../../../hooks/useTranslation';
 import styles from './Navigation.module.css';
 
 const Navigation: React.FC = () => {
+  const { t } = useTranslation();
+
   const navItems = [
-    { path: '/', label: 'Home' },
-    { path: '/experience', label: 'Experience' },
-    { path: '/education', label: 'Education' },
-    { path: '/blog', label: 'Blog' },
-    { path: '/contact', label: 'Contact' },
+    { path: '/', label: t.nav.home },
+    { path: '/experience', label: t.nav.experience },
+    { path: '/education', label: t.nav.education },
+    { path: '/blog', label: t.nav.blog },
+    { path: '/contact', label: t.nav.contact },
   ];
 
   return (
@@ -28,7 +32,10 @@ const Navigation: React.FC = () => {
             </NavLink>
           ))}
         </div>
-        <ThemeToggle />
+        <div className={styles.controls}>
+          <LanguageSelector />
+          <ThemeToggle />
+        </div>
       </div>
     </nav>
   );

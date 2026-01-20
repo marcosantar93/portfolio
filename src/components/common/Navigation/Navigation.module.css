@@ -54,10 +54,13 @@
   background-color: var(--text-color);
 }
 
-/* Position theme toggle absolutely on the right */
-.navContent > :last-child {
+/* Position controls absolutely on the right */
+.controls {
   position: absolute;
   right: var(--padding);
+  display: flex;
+  align-items: center;
+  gap: 16px;
 }
 
 @media (max-width: 640px) {

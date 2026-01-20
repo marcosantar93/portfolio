@@ -1,14 +1,17 @@
 import React from 'react';
+import { useTranslation } from '../../../hooks/useTranslation';
 import styles from './Header.module.css';
 
 const Header: React.FC = () => {
+  const { t } = useTranslation();
+
   return (
     <header className={styles.header}>
       <div className={styles.profileImage}>
         <img src="/assets/images/profile.jpg" alt="Marco Santar" />
       </div>
       <h1 className={styles.name}>Marco Santarcangelo</h1>
-      <p className={styles.title}>Full Stack Developer</p>
+      <p className={styles.title}>{t.home.titles[0]}</p>
     </header>
   );
 };

@@ -1,0 +1,61 @@
+.languageSelector {
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.lang {
+  color: var(--text-secondary);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 2px 4px;
+  border-radius: 3px;
+}
+
+.lang.active {
+  color: var(--text-color);
+  font-weight: 600;
+}
+
+.separator {
+  color: var(--text-secondary);
+  opacity: 0.5;
+  font-size: 10px;
+}
+
+.languageSelector:hover .lang {
+  color: var(--accent-color);
+}
+
+.languageSelector:hover .lang.active {
+  background: var(--accent-color);
+  color: var(--bg-color);
+  box-shadow: 0 0 8px var(--accent-color);
+}
+
+.languageSelector:hover .separator {
+  opacity: 0.8;
+  color: var(--accent-color);
+}
+
+@media (max-width: 640px) {
+  .languageSelector {
+    font-size: 10px;
+    gap: 1px;
+  }
+
+  .lang {
+    padding: 1px 3px;
+  }
+
+  .separator {
+    font-size: 9px;
+  }
+}

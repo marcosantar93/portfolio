@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from '../../hooks/useTranslation';
 import { contactLinks } from '../../content/data/contact';
 import styles from './Contact.module.css';
 
@@ -13,12 +14,13 @@ const getIconSymbol = (iconName: string): string => {
 };
 
 const Contact: React.FC = () => {
+  const { t } = useTranslation();
+
   return (
     <div className={styles.contact}>
-      <h1 className={styles.pageTitle}>Contact</h1>
+      <h1 className={styles.pageTitle}>{t.contact.pageTitle}</h1>
       <p className={styles.description}>
-        Feel free to reach out if you'd like to discuss mechanistic interpretability,
-        LLM safety research, or potential collaborations.
+        {t.contact.description}
       </p>
 
       <div className={styles.contactLinks}>

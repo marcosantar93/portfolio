@@ -1,10 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Timeline from '../../components/timeline/Timeline';
 import TimelineItem from '../../components/timeline/TimelineItem';
+import { useTranslation } from '../../hooks/useTranslation';
 import { experienceData } from '../../content/data/experience';
 import styles from './Experience.module.css';
 
 const Experience: React.FC = () => {
+  const { t } = useTranslation();
   const [scrollProgress, setScrollProgress] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -32,7 +34,7 @@ const Experience: React.FC = () => {
 
   return (
     <div className={styles.experience} ref={containerRef}>
-      <h1 className={styles.pageTitle}>Work Experience</h1>
+      <h1 className={styles.pageTitle}>{t.experience.pageTitle}</h1>
 
       <div
         className={styles.timelineProgress}
@@ -40,16 +42,19 @@ const Experience: React.FC = () => {
       />
 
       <Timeline>
-        {experienceData.map((item) => (
-          <TimelineItem
-            key={item.id}
-            title={item.title}
-            subtitle={item.company}
-            period={item.period}
-            description={item.description}
-            skills={item.skills}
-          />
-        ))}
+        {experienceData.map((item) => {
+          const translatedItem = t.experience.jobs[item.id as keyof typeof t.experience.jobs];
+          return (
+            <TimelineItem
+              key={item.id}
+              title={translatedItem?.title || item.title}
+              subtitle={translatedItem?.company || item.company}
+              period={translatedItem?.period || item.period}
+              description={translatedItem?.description || item.description}
+              skills={item.skills}
+            />
+          );
+        })}
       </Timeline>
     </div>
   );

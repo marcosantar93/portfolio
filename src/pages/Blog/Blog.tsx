@@ -1,21 +1,24 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
+import { useTranslation } from '../../hooks/useTranslation';
 import { blogPosts } from '../../content/blog';
 import styles from './Blog.module.css';
 
 const Blog: React.FC = () => {
+  const { t } = useTranslation();
+
   return (
     <div className={styles.blog}>
       <Helmet>
-        <title>Blog | Marco Santar</title>
-        <meta name="description" content="Thoughts and findings on mechanistic interpretability, LLM safety, and AI research by Marco Santar." />
+        <title>{t.blog.pageTitle} | Marco Santar</title>
+        <meta name="description" content={t.blog.metaDescription} />
         <link rel="canonical" href="https://marcosantar.com/blog" />
       </Helmet>
 
-      <h1 className={styles.pageTitle}>Blog</h1>
+      <h1 className={styles.pageTitle}>{t.blog.pageTitle}</h1>
       <p className={styles.description}>
-        Thoughts and findings on mechanistic interpretability, LLM safety, and AI research.
+        {t.blog.description}
       </p>
 
       <div className={styles.posts}>
@@ -43,7 +46,7 @@ const Blog: React.FC = () => {
       </div>
 
       {blogPosts.length === 0 && (
-        <p className={styles.noPosts}>No blog posts yet. Check back soon!</p>
+        <p className={styles.noPosts}>{t.blog.noPosts}</p>
       )}
     </div>
   );
