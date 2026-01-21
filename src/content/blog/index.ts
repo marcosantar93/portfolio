@@ -191,11 +191,11 @@ Probé un baseline de control: complejidad sintáctica (lenguaje formal vs. casu
 
 ### 2. Codificación Independiente del Contexto
 
-Los steering vectors extraídos de prompts de crisis support se transfirieron a escenarios de asistencia técnica con **87% de tasa de éxito**. Los modelos codifican "direcciones empáticas" abstractas que generalizan entre contextos.
+Los steering vectors extraídos de prompts de crisis support se transfirieron a escenarios de asistencia técnica con **87% de success rate**. Los modelos codifican "direcciones empáticas" abstractas que generalizan entre contextos.
 
 ### 3. Alta Dimensionalidad Correlaciona con Range
 
-Los modelos con ≥11 dimensiones promediaron 8.8 steering range. Aquellos con <11 promediaron 6.4. **Amplitud y profundidad co-evolucionan** — si un modelo desarrolla subspaces de empatía más ricos, también se vuelve más dirigible a lo largo de ellos.
+Los modelos con ≥11 dimensiones averaged 8.8 steering range. Aquellos con <11 averaged 6.4. **Breadth y depth co-evolucionan** — si un modelo desarrolla subspaces de empatía más ricos, también se vuelve más dirigible a lo largo de ellos.
 
 ## Metodología
 
@@ -208,8 +208,8 @@ Creé 50 pares de prompts empáticos/neutrales a través de 5 contextos:
 
 Para cada modelo:
 
-1. **Entrené linear probes** para detectar activaciones empáticas vs. neutrales (AUROC para medir separabilidad lineal)
-2. **Ejecuté PCA** en activaciones empáticas para medir dimensionalidad efectiva (umbral de 90% variance)
+1. **Entrené linear probes** para detectar activaciones empáticas vs. neutrales (AUROC para medir linear separability)
+2. **Ejecuté PCA** en activaciones empáticas para medir dimensionalidad efectiva (threshold de 90% variance)
 3. **Extraje steering vectors** (diferencia media entre empático/neutral) y probé coeficientes de -20 a +20
 4. **Medí coherence** en cada nivel de steering; max α donde coherence > 0.7 = steering range
 5. **Validé con Sparse Autoencoders** (SAE) para confirmar que PCA no solo captura ruido (los SAEs descomponen activaciones en features interpretables—ver Finding 4)
@@ -229,7 +229,7 @@ Gemma2-9B (136.6) vs. Mistral-7B (36.3). Esto no es marginal — es una **capaci
 
 ### Finding 2: Dimensionalidad + Range = Bandwidth
 
-Los modelos no intercambian amplitud por profundidad. Los modelos de alta dimensión (Gemma2, Llama-3.1) también muestran steering ranges altos. **Ambas propiedades co-evolucionan.**
+Los modelos no hacen trade off de breadth por depth. Los modelos de alta dimensión (Gemma2, Llama-3.1) también muestran steering ranges altos. **Ambas propiedades co-evolucionan.**
 
 **Especulación:** La correlación entre dimensionalidad y steering range sugiere que estas propiedades pueden desarrollarse juntas, aunque no podemos determinar causalidad solo de estos datos. Si representaciones más ricas son inherentemente más controlables requeriría estudios de ablation manipulando dimensionalidad directamente.
 
@@ -249,7 +249,7 @@ Syntactic complexity (formal vs. casual) promedió 33.1 bandwidth. Empathy prome
 
 ### Finding 5: Empathy Generaliza Entre Contextos
 
-87% de tasa de éxito de transferencia cuando steering vectors de crisis support → technical assistance. Los modelos codifican **patrones generalizables** que se transfieren entre contextos, sugiriendo que las representaciones empáticas no son puramente específicas del contexto—aunque si estas son verdaderamente "abstractas" o simplemente patrones de cortesía domain-general permanece como pregunta abierta.
+87% de success rate de transferencia cuando steering vectors de crisis support → technical assistance. Los modelos codifican **patrones generalizables** que se transfieren entre contextos, sugiriendo que las representaciones empáticas no son puramente específicas del contexto—aunque si estas son verdaderamente "abstractas" o simplemente patrones de cortesía domain-general permanece como pregunta abierta.
 
 **Impacto práctico:** Podés extraer empathy vectors de cualquier contexto y aplicarlos en otro lugar con éxito razonable.
 
@@ -268,7 +268,7 @@ Este estudio mide **representación geométrica de patrones de lenguaje empátic
 
 ## Limitaciones
 
-1. **Umbral de coherence:** El corte de 0.7 es algo arbitrario. Análisis de sensibilidad a través de múltiples umbrales fortalecería los findings. Coherence mide gramaticalidad/tematicidad, no helpfulness empática.
+1. **Coherence threshold:** El corte de 0.7 es algo arbitrario. Análisis de sensibilidad a través de múltiples thresholds fortalecería los findings. Coherence mide gramaticalidad/tematicidad, no helpfulness empática.
 2. **Suposiciones de PCA:** La reducción de dimensionalidad lineal perderá estructura no lineal. La validación SAE confirma que las dimensiones lineales son interpretables, pero la empatía también puede codificarse en manifolds no lineales que no estamos midiendo.
 3. **Selección de modelos:** Limitado a modelos open-weight de 7-9B. Los modelos más grandes (70B+) pueden mostrar patrones diferentes.
 4. **Diversidad de prompts:** 50 pares proporcionan buena cobertura pero más escenarios diversos fortalecerían las afirmaciones de generalización.
@@ -287,7 +287,7 @@ Este estudio mide **representación geométrica de patrones de lenguaje empátic
 ¿Emerge la empatía gradualmente a través de layers, o se concentra en regiones específicas? Podría informar dónde aplicar steering para máximo efecto.
 
 **Scaling a Modelos Más Grandes**
-¿Muestran los modelos 70B+ bandwidth aún mayor? ¿O llegan a rendimientos decrecientes?
+¿Muestran los modelos 70B+ bandwidth aún mayor? ¿O llegan a diminishing returns?
 
 ## Implicaciones Prácticas
 
