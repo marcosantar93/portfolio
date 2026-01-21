@@ -76,6 +76,11 @@ const BlogPost: React.FC = () => {
   const displayExcerpt = translatedPost?.excerpt || post.excerpt;
   const displayReadTime = translatedPost?.readTime || post.readTime;
 
+  // Check if there's a language notice to display
+  const languageNotice = translatedPost && 'contentAvailableInEnglishOnly' in translatedPost
+    ? (translatedPost as any).contentAvailableInEnglishOnly
+    : null;
+
   const pageTitle = `${displayTitle} | Marco Santarcangelo Zazzetta`;
   const pageUrl = `https://marcosantar.com/blog/${post.slug}`;
 
@@ -129,6 +134,12 @@ const BlogPost: React.FC = () => {
             </div>
           )}
         </header>
+
+        {languageNotice && (
+          <div className={styles.languageNotice}>
+            {languageNotice}
+          </div>
+        )}
 
         <div className={styles.content}>
           {post.content ? (

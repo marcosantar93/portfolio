@@ -65,6 +65,18 @@
   font-weight: 300;
 }
 
+.languageNotice {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-left: 3px solid var(--accent-color);
+  padding: 16px 20px;
+  border-radius: 8px;
+  margin-bottom: 32px;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+
 .content {
   font-size: 1rem;
   color: var(--text-color);

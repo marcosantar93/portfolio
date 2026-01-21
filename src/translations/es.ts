@@ -122,6 +122,7 @@ Actualmente experimento con activation steering y representation analysis en mi 
       title: 'Midiendo el Empathetic Language Bandwidth en LLMs',
       excerpt: 'Investigando cómo diferentes language models codifican patrones de comunicación empática a través de geometric analysis. Encontramos una variación del 109% en representational bandwidth entre cinco modelos de 7-9B, con empathy encoding 2.8x más grande que syntactic complexity.',
       readTime: '12 min de lectura',
+      contentAvailableInEnglishOnly: '📝 Este artículo técnico está disponible solo en inglés.',
     },
   },
 };
