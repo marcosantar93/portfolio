@@ -41,6 +41,7 @@ export interface BlogPost {
   tags: string[];
   readTime?: string;
   content?: string;
+  contentEs?: string;
 }
 
 export interface ContactLink {

@@ -54,7 +54,7 @@ const renderMarkdown = (markdown: string): string => {
 
 const BlogPost: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const post = blogPosts.find(p => p.slug === slug);
 
   if (!post) {
@@ -76,10 +76,8 @@ const BlogPost: React.FC = () => {
   const displayExcerpt = translatedPost?.excerpt || post.excerpt;
   const displayReadTime = translatedPost?.readTime || post.readTime;
 
-  // Check if there's a language notice to display
-  const languageNotice = translatedPost && 'contentAvailableInEnglishOnly' in translatedPost
-    ? (translatedPost as any).contentAvailableInEnglishOnly
-    : null;
+  // Get content in the appropriate language
+  const displayContent = language === 'es' && post.contentEs ? post.contentEs : post.content;
 
   const pageTitle = `${displayTitle} | Marco Santarcangelo Zazzetta`;
   const pageUrl = `https://marcosantar.com/blog/${post.slug}`;
@@ -135,15 +133,9 @@ const BlogPost: React.FC = () => {
           )}
         </header>
 
-        {languageNotice && (
-          <div className={styles.languageNotice}>
-            {languageNotice}
-          </div>
-        )}
-
         <div className={styles.content}>
-          {post.content ? (
-            <div dangerouslySetInnerHTML={{ __html: renderMarkdown(post.content) }} />
+          {displayContent ? (
+            <div dangerouslySetInnerHTML={{ __html: renderMarkdown(displayContent) }} />
           ) : (
             <>
               <p>{post.excerpt}</p>
