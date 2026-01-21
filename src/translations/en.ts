@@ -115,4 +115,13 @@ Currently experimenting with activation steering and representation analysis in 
     switchToSpanish: 'Switch to Spanish',
     switchToEnglish: 'Switch to English',
   },
+
+  // Blog Posts
+  blogPosts: {
+    'empathetic-language-bandwidth': {
+      title: 'Measuring Empathetic Language Bandwidth in LLMs',
+      excerpt: 'Investigating how different language models encode empathetic communication patterns through geometric analysis. We find 109% variation in representational bandwidth across five 7-9B models, with empathy encoding 2.8x larger than syntactic complexity.',
+      readTime: '12 min read',
+    },
+  },
 };

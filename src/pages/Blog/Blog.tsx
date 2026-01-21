@@ -22,27 +22,34 @@ const Blog: React.FC = () => {
       </p>
 
       <div className={styles.posts}>
-        {blogPosts.map((post) => (
-          <Link key={post.slug} to={`/blog/${post.slug}`} className={styles.postLink}>
-            <article className={styles.postCard}>
-              <div className={styles.postHeader}>
-                <h2 className={styles.postTitle}>{post.title}</h2>
-                <div className={styles.postMeta}>
-                  <span className={styles.date}>{post.date}</span>
-                  {post.readTime && <span className={styles.readTime}>{post.readTime}</span>}
+        {blogPosts.map((post) => {
+          const translatedPost = t.blogPosts[post.slug as keyof typeof t.blogPosts];
+          const displayTitle = translatedPost?.title || post.title;
+          const displayExcerpt = translatedPost?.excerpt || post.excerpt;
+          const displayReadTime = translatedPost?.readTime || post.readTime;
+
+          return (
+            <Link key={post.slug} to={`/blog/${post.slug}`} className={styles.postLink}>
+              <article className={styles.postCard}>
+                <div className={styles.postHeader}>
+                  <h2 className={styles.postTitle}>{displayTitle}</h2>
+                  <div className={styles.postMeta}>
+                    <span className={styles.date}>{post.date}</span>
+                    {displayReadTime && <span className={styles.readTime}>{displayReadTime}</span>}
+                  </div>
                 </div>
-              </div>
-              <p className={styles.excerpt}>{post.excerpt}</p>
-              <div className={styles.tags}>
-                {post.tags.map((tag) => (
-                  <span key={tag} className={styles.tag}>
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            </article>
-          </Link>
-        ))}
+                <p className={styles.excerpt}>{displayExcerpt}</p>
+                <div className={styles.tags}>
+                  {post.tags.map((tag) => (
+                    <span key={tag} className={styles.tag}>
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </article>
+            </Link>
+          );
+        })}
       </div>
 
       {blogPosts.length === 0 && (

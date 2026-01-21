@@ -10,17 +10,17 @@ export const es = {
 
   // Página de Inicio
   home: {
-    pageTitle: 'Marco Santarcangelo Zazzetta - Ingeniero en Robótica y CV',
-    metaDescription: 'Marco Santarcangelo Zazzetta - Ingeniero en Robótica y CV, investigador de ML, y desarrollador full-stack. Explorando interpretabilidad mecanística y seguridad en LLMs.',
+    pageTitle: 'Marco Santarcangelo Zazzetta - Robotics & CV Engineer',
+    metaDescription: 'Marco Santarcangelo Zazzetta - Robotics & CV Engineer, investigador de ML, y full-stack developer. Explorando mechanistic interpretability y seguridad en LLMs.',
     aboutTitle: 'Acerca de',
-    skillsTitle: 'Habilidades',
-    aboutText: `Soy Ingeniero en Robótica y CV en Scale AI con un profundo interés en la interpretabilidad mecanística y en comprender cómo funcionan realmente las redes neuronales. Mi experiencia abarca visión por computadora, desarrollo full-stack e infraestructura en la nube, pero lo que más me entusiasma es explorar el funcionamiento interno de los modelos de lenguaje y los mecanismos de seguridad en sistemas de IA.
+    skillsTitle: 'Skills',
+    aboutText: `Soy Robotics & CV Engineer en Scale AI con un profundo interés en mechanistic interpretability y en comprender cómo funcionan realmente las redes neuronales. Mi experiencia abarca computer vision, desarrollo full-stack e infraestructura en la nube, pero lo que más me entusiasma es explorar el funcionamiento interno de los language models y los mecanismos de seguridad en sistemas de IA.
 
-Actualmente experimento con dirección de activaciones y análisis de representaciones en mi tiempo libre, intentando mapear cómo diferentes familias de modelos codifican conceptos relacionados con la seguridad.`,
+Actualmente experimento con activation steering y representation analysis en mi tiempo libre, intentando mapear cómo diferentes familias de modelos codifican conceptos relacionados con la seguridad.`,
     titles: [
-      'Ingeniero en Robótica y CV',
-      'Aspirante a Investigador de Interp. Mecanística',
-      'Desarrollador Full Stack',
+      'Robotics & CV Engineer',
+      'Wannabe Mech Interp Researcher',
+      'Full Stack Developer',
     ],
   },
 
@@ -29,52 +29,52 @@ Actualmente experimento con dirección de activaciones y análisis de representa
     pageTitle: 'Experiencia',
     jobs: {
       'scale-ai': {
-        title: 'Ingeniero en Robótica y CV',
+        title: 'Robotics & CV Engineer',
         company: 'Scale AI',
         period: 'Dic 2024 — Presente',
-        description: 'Trabajo en soluciones de robótica y visión por computadora para datos de entrenamiento de IA.',
+        description: 'Trabajo en soluciones de robótica y computer vision para datos de entrenamiento de IA.',
       },
       'caylent': {
-        title: 'Ingeniero Cloud',
+        title: 'Cloud Engineer',
         company: 'Caylent',
         period: 'Ene 2024 — Dic 2024',
-        description: 'Diseñé e implementé soluciones de infraestructura en la nube para clientes empresariales usando servicios de AWS.',
+        description: 'Diseñé e implementé soluciones de infraestructura cloud para clientes empresariales usando servicios de AWS.',
       },
       'amazon': {
-        title: 'Ingeniero de Desarrollo de Software',
+        title: 'Software Development Engineer',
         company: 'Amazon',
         period: 'Jun 2022 — Jun 2023',
         description: 'Desarrollé servicios backend escalables y APIs para la plataforma de e-commerce de Amazon.',
       },
       'zksystems': {
-        title: 'Desarrollador Full Stack y Tech Lead',
+        title: 'Full Stack Developer & Tech Lead',
         company: 'ZkSystems',
         period: 'Mar 2021 — Jun 2022',
         description: 'Lideré el equipo de desarrollo construyendo aplicaciones web y gestioné las decisiones de arquitectura técnica.',
       },
       'rebellion-pay': {
-        title: 'Desarrollador Full Stack',
+        title: 'Full Stack Developer',
         company: 'Rebellion Pay',
         period: 'Jun 2020 — Mar 2021',
         description: 'Desarrollé aplicaciones fintech con enfoque en procesamiento de pagos y seguridad.',
       },
       'freelance': {
-        title: 'Desarrollador Front-end',
+        title: 'Front-end Developer',
         company: 'Freelance',
         period: 'Jun 2019 — Jun 2020',
         description: 'Construí aplicaciones web responsivas para varios clientes en diferentes industrias.',
       },
       'sysone': {
-        title: 'Desarrollador Móvil y Backend',
+        title: 'Mobile & Backend Developer',
         company: 'SysOne',
         period: 'Feb 2019 — Jun 2019',
         description: 'Desarrollé aplicaciones móviles y APIs backend para soluciones empresariales.',
       },
       'wehaus': {
-        title: 'Desarrollador IoT y Visión por Computadora',
+        title: 'IoT & Computer Vision Developer',
         company: 'WeHaus IoT',
         period: 'Ene 2018 — Feb 2019',
-        description: 'Implementé soluciones IoT y sistemas de visión por computadora para automatización de hogares inteligentes.',
+        description: 'Implementé soluciones IoT y sistemas de computer vision para automatización de smart homes.',
       },
     },
   },
@@ -84,10 +84,10 @@ Actualmente experimento con dirección de activaciones y análisis de representa
     pageTitle: 'Educación',
     items: {
       'unlp': {
-        degree: 'Ingeniería en Computación',
+        degree: 'Computer Engineering',
         institution: 'Universidad Nacional de La Plata',
         period: '2012 — 2018',
-        description: 'Enfocado en ingeniería de software, sistemas embebidos y arquitectura de computadoras.',
+        description: 'Enfocado en software engineering, embedded systems y computer architecture.',
       },
     },
   },
@@ -95,15 +95,15 @@ Actualmente experimento con dirección de activaciones y análisis de representa
   // Página de Blog
   blog: {
     pageTitle: 'Blog',
-    metaDescription: 'Reflexiones y hallazgos sobre interpretabilidad mecanística, seguridad en LLMs e investigación en IA por Marco Santarcangelo Zazzetta.',
-    description: 'Reflexiones y hallazgos sobre interpretabilidad mecanística, seguridad en LLMs e investigación en IA.',
+    metaDescription: 'Reflexiones y hallazgos sobre mechanistic interpretability, seguridad en LLMs e investigación en IA por Marco Santarcangelo Zazzetta.',
+    description: 'Reflexiones y hallazgos sobre mechanistic interpretability, seguridad en LLMs e investigación en IA.',
     noPosts: '¡Aún no hay publicaciones! Vuelve pronto.',
   },
 
   // Página de Contacto
   contact: {
     pageTitle: 'Contacto',
-    description: 'Siéntete libre de contactarme si te gustaría discutir sobre interpretabilidad mecanística, investigación en seguridad de LLMs, o posibles colaboraciones.',
+    description: 'Siéntete libre de contactarme si te gustaría discutir sobre mechanistic interpretability, investigación en seguridad de LLMs, o posibles colaboraciones.',
   },
 
   // Común
@@ -114,5 +114,14 @@ Actualmente experimento con dirección de activaciones y análisis de representa
     switchToLight: 'Cambiar a modo claro',
     switchToSpanish: 'Cambiar a español',
     switchToEnglish: 'Cambiar a inglés',
+  },
+
+  // Blog Posts
+  blogPosts: {
+    'empathetic-language-bandwidth': {
+      title: 'Midiendo el Empathetic Language Bandwidth en LLMs',
+      excerpt: 'Investigando cómo diferentes language models codifican patrones de comunicación empática a través de geometric analysis. Encontramos una variación del 109% en representational bandwidth entre cinco modelos de 7-9B, con empathy encoding 2.8x más grande que syntactic complexity.',
+      readTime: '12 min de lectura',
+    },
   },
 };

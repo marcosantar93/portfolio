@@ -1,6 +1,7 @@
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
+import { useTranslation } from '../../hooks/useTranslation';
 import { blogPosts } from '../../content/blog';
 import styles from './BlogPost.module.css';
 
@@ -53,6 +54,7 @@ const renderMarkdown = (markdown: string): string => {
 
 const BlogPost: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
+  const { t } = useTranslation();
   const post = blogPosts.find(p => p.slug === slug);
 
   if (!post) {
@@ -63,27 +65,32 @@ const BlogPost: React.FC = () => {
           The blog post you're looking for doesn't exist.
         </p>
         <Link to="/blog" className={styles.backLink}>
-          ← Back to Blog
+          ← {t.common.backToBlog}
         </Link>
       </div>
     );
   }
 
-  const pageTitle = `${post.title} | Marco Santarcangelo Zazzetta`;
+  const translatedPost = t.blogPosts[post.slug as keyof typeof t.blogPosts];
+  const displayTitle = translatedPost?.title || post.title;
+  const displayExcerpt = translatedPost?.excerpt || post.excerpt;
+  const displayReadTime = translatedPost?.readTime || post.readTime;
+
+  const pageTitle = `${displayTitle} | Marco Santarcangelo Zazzetta`;
   const pageUrl = `https://marcosantar.com/blog/${post.slug}`;
 
   return (
     <div className={styles.blogPost}>
       <Helmet>
         <title>{pageTitle}</title>
-        <meta name="description" content={post.excerpt} />
+        <meta name="description" content={displayExcerpt} />
         <meta name="keywords" content={post.tags.join(', ')} />
 
         {/* Open Graph / Facebook */}
         <meta property="og:type" content="article" />
         <meta property="og:url" content={pageUrl} />
-        <meta property="og:title" content={post.title} />
-        <meta property="og:description" content={post.excerpt} />
+        <meta property="og:title" content={displayTitle} />
+        <meta property="og:description" content={displayExcerpt} />
         <meta property="article:published_time" content={post.date} />
         <meta property="article:author" content="Marco Santarcangelo Zazzetta" />
         {post.tags.map(tag => (
@@ -93,8 +100,8 @@ const BlogPost: React.FC = () => {
         {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:url" content={pageUrl} />
-        <meta name="twitter:title" content={post.title} />
-        <meta name="twitter:description" content={post.excerpt} />
+        <meta name="twitter:title" content={displayTitle} />
+        <meta name="twitter:description" content={displayExcerpt} />
         <meta name="twitter:creator" content="@marcosantar93" />
 
         {/* Canonical URL */}
@@ -102,15 +109,15 @@ const BlogPost: React.FC = () => {
       </Helmet>
 
       <Link to="/blog" className={styles.backLink}>
-        ← Back to Blog
+        ← {t.common.backToBlog}
       </Link>
 
       <article className={styles.article}>
         <header className={styles.header}>
-          <h1 className={styles.title}>{post.title}</h1>
+          <h1 className={styles.title}>{displayTitle}</h1>
           <div className={styles.meta}>
             <span className={styles.date}>{post.date}</span>
-            {post.readTime && <span className={styles.readTime}>• {post.readTime}</span>}
+            {displayReadTime && <span className={styles.readTime}>• {displayReadTime}</span>}
           </div>
           {post.tags && post.tags.length > 0 && (
             <div className={styles.tags}>
