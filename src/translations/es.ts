@@ -103,7 +103,7 @@ Actualmente experimento con activation steering y representation analysis en mi 
   // Página de Contacto
   contact: {
     pageTitle: 'Contacto',
-    description: 'Siéntete libre de contactarme si te gustaría discutir sobre mechanistic interpretability, investigación en seguridad de LLMs, o posibles colaboraciones.',
+    description: 'Sentite libre de contactarme si te gustaría discutir sobre mechanistic interpretability, investigación en seguridad de LLMs, o posibles colaboraciones.',
   },
 
   // Común

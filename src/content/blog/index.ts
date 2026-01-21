@@ -165,7 +165,7 @@ If you're building applications requiring empathetic communication:
 
 *Este trabajo fue inspirado por una [conversación con j⧉nus](https://x.com/repligate/status/1879968588620181698) sobre si el "empathetic bandwidth" en LLMs podría medirse geométricamente.*
 
-Medí esto a través de cinco modelos de 7-9B parámetros usando lo que llamo **empathetic bandwidth** — el producto de la dimensionalidad del subespacio y el steering range. Piénsalo como: ¿cuántas dimensiones usa el modelo para codificar empatía, y qué tan lejos podemos hacer steering en esas dimensiones antes de que los outputs se vuelvan incoherentes?
+Medí esto a través de cinco modelos de 7-9B parámetros usando lo que llamo **empathetic bandwidth** — el producto de la dimensionalidad del subespacio y el steering range. Pensalo como: ¿cuántas dimensiones usa el modelo para codificar empatía, y qué tan lejos podemos hacer steering en esas dimensiones antes de que los outputs se vuelvan incoherentes?
 
 ## Lo Que Encontré
 
@@ -251,7 +251,7 @@ Syntactic complexity (formal vs. casual) promedió 33.1 bandwidth. Empathy prome
 
 87% de tasa de éxito de transferencia cuando steering vectors de crisis support → technical assistance. Los modelos codifican **patrones generalizables** que se transfieren entre contextos, sugiriendo que las representaciones empáticas no son puramente específicas del contexto—aunque si estas son verdaderamente "abstractas" o simplemente patrones de cortesía domain-general permanece como pregunta abierta.
 
-**Impacto práctico:** Puedes extraer empathy vectors de cualquier contexto y aplicarlos en otro lugar con éxito razonable.
+**Impacto práctico:** Podés extraer empathy vectors de cualquier contexto y aplicarlos en otro lugar con éxito razonable.
 
 ## Lo Que NO Estamos Afirmando
 
