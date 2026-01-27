@@ -126,16 +126,20 @@
 .content pre {
   background-color: var(--card-bg);
   border: 1px solid var(--border-color);
-  padding: 16px;
+  padding: 16px 20px;
   border-radius: 8px;
   overflow-x: auto;
   margin-bottom: 24px;
+  line-height: 1.5;
 }
 
 .content pre code {
   background: none;
   border: none;
   padding: 0;
+  line-height: inherit;
+  display: block;
+  white-space: pre;
 }
 
 .content a {

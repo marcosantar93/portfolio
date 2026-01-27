@@ -33,8 +33,8 @@ const renderMarkdown = (markdown: string): string => {
     .replace(/\*(.*?)\*/g, '<em>$1</em>')
     // Links
     .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>')
-    // Code blocks
-    .replace(/```([^`]+)```/g, '<pre><code>$1</code></pre>')
+    // Code blocks (trim whitespace)
+    .replace(/```([^`]+)```/g, (_, code) => `<pre><code>${code.trim()}</code></pre>`)
     // Inline code
     .replace(/`([^`]+)`/g, '<code>$1</code>')
     // Unordered lists
