@@ -118,6 +118,11 @@ Currently experimenting with activation steering and representation analysis in 
 
   // Blog Posts
   blogPosts: {
+    'layer-specific-safety-vulnerabilities': {
+      title: 'Layer-Specific Safety Vulnerabilities in LLMs: 83% Jailbreak Rate via Activation Steering',
+      excerpt: 'Investigating how safety mechanisms in instruction-tuned language models are layer-localized and systematically bypassable. We achieve 83% jailbreak success on Mistral-7B through targeted layer-24 activation steering, while Gemma and Llama remain resistant.',
+      readTime: '10 min read',
+    },
     'empathetic-language-bandwidth': {
       title: 'Measuring Empathetic Language Bandwidth in LLMs',
       excerpt: 'Investigating how different language models encode empathetic communication patterns through geometric analysis. We find 109% variation in representational bandwidth across five 7-9B models, with empathy encoding 2.8x larger than syntactic complexity.',

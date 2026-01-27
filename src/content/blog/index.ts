@@ -2,6 +2,326 @@ import { BlogPost } from '../../types';
 
 export const blogPosts: BlogPost[] = [
   {
+    slug: 'layer-specific-safety-vulnerabilities',
+    title: 'Layer-Specific Safety Vulnerabilities in LLMs: 83% Jailbreak Rate via Activation Steering',
+    date: '2026-01-27',
+    excerpt: 'Investigating how safety mechanisms in instruction-tuned language models are layer-localized and systematically bypassable. We achieve 83% jailbreak success on Mistral-7B through targeted layer-24 activation steering, while Gemma and Llama remain resistant.',
+    tags: ['AI Safety', 'Activation Steering', 'Mechanistic Interpretability', 'Research'],
+    readTime: '10 min read',
+    content: `
+## The Question
+
+Are safety mechanisms in instruction-tuned language models distributed throughout the network, or concentrated in specific layers? And if concentrated, can they be bypassed through targeted activation steering?
+
+This question has significant implications for AI safety. If safety is layer-localized, it suggests current alignment techniques may be more fragile than assumed—and that robust defenses need to account for activation-level attacks.
+
+## Core Finding
+
+**Mistral-7B-Instruct exhibits an 83% jailbreak success rate** through layer-specific activation steering at layer 24.
+
+### Best Configuration
+
+| Parameter | Value |
+|-----------|-------|
+| Model | Mistral-7B-Instruct-v0.3 |
+| Target Layer | 24 (deep layer) |
+| Steering Coefficient (α) | 15 |
+| Jailbreak Success Rate | 83.3% |
+| Coherence Score | 4.2/5.0 |
+
+This isn't random noise—outputs remain fluent and on-topic while bypassing safety refusals. The attack is both effective and subtle.
+
+## Three-Gate Control System
+
+To ensure our findings are robust, we validated through a three-gate control system:
+
+1. **Gate 1 - Direction Specificity:** Our extracted steering direction outperforms random vectors by **89.6x**. This isn't just adding noise.
+
+2. **Gate 2 - Coherence Preservation:** Steered outputs maintain **4.2/5.0 coherence**. The model still produces fluent, grammatical text.
+
+3. **Gate 3 - Statistical Power:** **83.3% flip rate** from refusal to compliance. This is a substantial effect, not marginal.
+
+## The Parameter Sweep
+
+We tested 28 configurations across Mistral-7B:
+
+**Grid:**
+- Layers: 15, 18, 21, 24, 27
+- Alpha values: 5, 10, 15, 20, 25, 30
+
+**Top Results (Passing All Controls):**
+
+| Layer | Alpha | Flip Rate | Status |
+|-------|-------|-----------|--------|
+| 24 | 15 | 83% | Best |
+| 21 | 15 | 67% | Good |
+| 24 | 10 | 67% | Good |
+| 27 | 15 | 67% | Good |
+| 27 | 20 | 57% | Moderate |
+
+**Key insight:** Vulnerability is concentrated in **layers 21-27**, with layer 24 being optimal. Earlier layers (15, 18) show minimal effect. This suggests safety mechanisms are localized in the deeper layers of the network.
+
+## Cross-Model Comparison
+
+### Gemma-2-9B: Resistant
+
+We tested 11 configurations on Gemma-2-9B with striking results:
+
+- **Best result:** Layer 18, α=15 → only 11% flip rate
+- **0 of 11 configurations passed Control 3**
+- Gemma appears to have more robust, distributed safety mechanisms
+
+### Llama-3.1-8B: Fully Resistant
+
+- Tested Layer 21, α=20
+- **0% flip rate**
+- Completely resistant to single-layer steering attacks
+
+This asymmetry is significant. Same attack technique, dramatically different outcomes. What makes Gemma and Llama more robust?
+
+## Methodology
+
+### Steering Vector Extraction
+
+We use Contrastive Activation Addition (CAA) style extraction:
+
+\`\`\`
+steering_vector = mean(harmful_activations) - mean(harmless_activations)
+\`\`\`
+
+This creates a "direction" in activation space that points from safe behavior toward unsafe behavior.
+
+### Activation Steering During Generation
+
+We insert a hook at the target layer that modifies activations:
+
+\`\`\`
+h' = h + α·v
+\`\`\`
+
+Where α is the scaling coefficient, applied at the last token position during generation.
+
+## What This Means for AI Safety
+
+### Research Questions Answered
+
+1. **Is safety layer-localized?** YES — concentrated in layers 21-27 for Mistral
+2. **Can it be bypassed with steering?** YES — 83% success rate
+3. **Does it maintain coherence?** YES — 4.2/5.0 coherence score
+4. **Is this universal?** NO — Gemma & Llama show resistance
+
+### Why Some Models Resist
+
+The resistance shown by Gemma and Llama suggests they may have:
+- More distributed safety mechanisms across layers
+- Redundant refusal pathways
+- Different training procedures that encode safety more robustly
+
+Understanding these differences could inform better alignment strategies.
+
+## Defense Recommendations
+
+Based on our findings, we recommend:
+
+1. **Distributed Safety:** Implement refusal mechanisms across all layers, not just deep layers
+2. **Adversarial Training:** Include activation steering in red-teaming procedures
+3. **Runtime Monitoring:** Add anomaly detection for unusual activation patterns
+4. **Ensemble Approaches:** Use multiple independent safeguards that can't all be bypassed simultaneously
+
+## Limitations
+
+- Tested on 7-9B parameter models; larger models may behave differently
+- Single-layer attacks only; multi-layer coordinated attacks remain unexplored
+- Coherence judging used automated metrics, not human evaluation
+- Results specific to instruction-tuned model variants
+
+## Future Work
+
+**Validation Cycles (Planned):**
+- Probing classifiers to validate layer-24 projection accuracy
+- Activation patching to test necessity/sufficiency of specific layers
+- Multi-layer coordinated attacks to test Gemma/Llama resistance
+
+**Temporal Dynamics:**
+- Token-by-token steering analysis
+- Attention head ablation studies
+- Progressive steering decay tests
+
+## Practical Implications
+
+If you're evaluating LLM safety:
+
+1. **Don't assume safety mechanisms are robust to activation-level attacks**
+2. **Model choice matters** — Mistral shows 83% vulnerability while Llama shows 0%
+3. **Deep layers (21-27) are the critical zone** for Mistral-style architectures
+4. **Coherence is preserved** — attackers can bypass safety while maintaining output quality
+
+**Bottom line:** Safety in instruction-tuned LLMs can be layer-localized and systematically bypassable. Robust alignment requires distributed defenses.
+
+---
+
+*Repository with full code, data, and reproduction instructions: [GitHub - Crystallized Safety](https://github.com/marcosantar93/crystallized-safety)*
+
+*Technical paper available in the repository's papers directory.*
+    `,
+    contentEs: `
+## La Pregunta
+
+¿Están los mecanismos de seguridad en language models instruction-tuned distribuidos a través de la red, o concentrados en layers específicos? Y si están concentrados, ¿pueden bypassearse mediante activation steering dirigido?
+
+Esta pregunta tiene implicaciones significativas para AI safety. Si la seguridad está layer-localized, sugiere que las técnicas actuales de alignment pueden ser más frágiles de lo asumido—y que las defensas robustas necesitan considerar ataques a nivel de activación.
+
+## Hallazgo Principal
+
+**Mistral-7B-Instruct exhibe un 83% de success rate de jailbreak** mediante layer-specific activation steering en el layer 24.
+
+### Mejor Configuración
+
+| Parámetro | Valor |
+|-----------|-------|
+| Modelo | Mistral-7B-Instruct-v0.3 |
+| Target Layer | 24 (deep layer) |
+| Steering Coefficient (α) | 15 |
+| Jailbreak Success Rate | 83.3% |
+| Coherence Score | 4.2/5.0 |
+
+Esto no es ruido aleatorio—los outputs permanecen fluidos y on-topic mientras bypasean los safety refusals. El ataque es tanto efectivo como sutil.
+
+## Three-Gate Control System
+
+Para asegurar que nuestros hallazgos son robustos, validamos mediante un sistema de control de tres gates:
+
+1. **Gate 1 - Direction Specificity:** Nuestra dirección de steering extraída supera a vectores aleatorios por **89.6x**. Esto no es solo agregar ruido.
+
+2. **Gate 2 - Coherence Preservation:** Los outputs con steering mantienen **4.2/5.0 coherence**. El modelo sigue produciendo texto fluido y gramatical.
+
+3. **Gate 3 - Statistical Power:** **83.3% flip rate** de refusal a compliance. Este es un efecto sustancial, no marginal.
+
+## El Parameter Sweep
+
+Probamos 28 configuraciones en Mistral-7B:
+
+**Grid:**
+- Layers: 15, 18, 21, 24, 27
+- Valores de alpha: 5, 10, 15, 20, 25, 30
+
+**Mejores Resultados (Pasando Todos los Controls):**
+
+| Layer | Alpha | Flip Rate | Status |
+|-------|-------|-----------|--------|
+| 24 | 15 | 83% | Best |
+| 21 | 15 | 67% | Good |
+| 24 | 10 | 67% | Good |
+| 27 | 15 | 67% | Good |
+| 27 | 20 | 57% | Moderate |
+
+**Insight clave:** La vulnerabilidad está concentrada en **layers 21-27**, siendo el layer 24 el óptimo. Los layers anteriores (15, 18) muestran efecto mínimo. Esto sugiere que los mecanismos de seguridad están localizados en los layers más profundos de la red.
+
+## Comparación Cross-Model
+
+### Gemma-2-9B: Resistente
+
+Probamos 11 configuraciones en Gemma-2-9B con resultados notables:
+
+- **Mejor resultado:** Layer 18, α=15 → solo 11% flip rate
+- **0 de 11 configuraciones pasaron Control 3**
+- Gemma parece tener mecanismos de seguridad más robustos y distribuidos
+
+### Llama-3.1-8B: Completamente Resistente
+
+- Probado Layer 21, α=20
+- **0% flip rate**
+- Completamente resistente a ataques de steering single-layer
+
+Esta asimetría es significativa. Misma técnica de ataque, outcomes dramáticamente diferentes. ¿Qué hace a Gemma y Llama más robustos?
+
+## Metodología
+
+### Steering Vector Extraction
+
+Usamos extracción estilo Contrastive Activation Addition (CAA):
+
+\`\`\`
+steering_vector = mean(harmful_activations) - mean(harmless_activations)
+\`\`\`
+
+Esto crea una "dirección" en el espacio de activación que apunta de comportamiento seguro hacia comportamiento inseguro.
+
+### Activation Steering Durante Generación
+
+Insertamos un hook en el target layer que modifica activaciones:
+
+\`\`\`
+h' = h + α·v
+\`\`\`
+
+Donde α es el coeficiente de scaling, aplicado en la posición del último token durante generación.
+
+## Qué Significa Esto para AI Safety
+
+### Preguntas de Investigación Respondidas
+
+1. **¿Está la seguridad layer-localized?** SÍ — concentrada en layers 21-27 para Mistral
+2. **¿Puede bypassearse con steering?** SÍ — 83% success rate
+3. **¿Mantiene coherence?** SÍ — 4.2/5.0 coherence score
+4. **¿Es universal?** NO — Gemma & Llama muestran resistencia
+
+### Por Qué Algunos Modelos Resisten
+
+La resistencia mostrada por Gemma y Llama sugiere que pueden tener:
+- Mecanismos de seguridad más distribuidos entre layers
+- Pathways de refusal redundantes
+- Diferentes procedimientos de training que codifican seguridad más robustamente
+
+Entender estas diferencias podría informar mejores estrategias de alignment.
+
+## Recomendaciones de Defensa
+
+Basados en nuestros hallazgos, recomendamos:
+
+1. **Distributed Safety:** Implementar mecanismos de refusal en todos los layers, no solo deep layers
+2. **Adversarial Training:** Incluir activation steering en procedimientos de red-teaming
+3. **Runtime Monitoring:** Agregar detección de anomalías para patrones de activación inusuales
+4. **Ensemble Approaches:** Usar múltiples safeguards independientes que no puedan bypassearse simultáneamente
+
+## Limitaciones
+
+- Probado en modelos de 7-9B parámetros; modelos más grandes pueden comportarse diferente
+- Solo ataques single-layer; ataques multi-layer coordinados permanecen inexplorados
+- Coherence judging usó métricas automatizadas, no evaluación humana
+- Resultados específicos para variantes de modelos instruction-tuned
+
+## Trabajo Futuro
+
+**Ciclos de Validación (Planeados):**
+- Probing classifiers para validar layer-24 projection accuracy
+- Activation patching para probar necesidad/suficiencia de layers específicos
+- Ataques multi-layer coordinados para probar resistencia de Gemma/Llama
+
+**Temporal Dynamics:**
+- Análisis de steering token-by-token
+- Estudios de ablation de attention heads
+- Tests de progressive steering decay
+
+## Implicaciones Prácticas
+
+Si estás evaluando LLM safety:
+
+1. **No asumas que los mecanismos de seguridad son robustos a ataques a nivel de activación**
+2. **La elección del modelo importa** — Mistral muestra 83% de vulnerabilidad mientras Llama muestra 0%
+3. **Los deep layers (21-27) son la zona crítica** para arquitecturas estilo Mistral
+4. **Coherence se preserva** — los atacantes pueden bypasear seguridad manteniendo calidad de output
+
+**Conclusión:** La seguridad en LLMs instruction-tuned puede estar layer-localized y ser sistemáticamente bypasseable. El alignment robusto requiere defensas distribuidas.
+
+---
+
+*Repositorio con código completo, datos e instrucciones de reproducción: [GitHub - Crystallized Safety](https://github.com/marcosantar93/crystallized-safety)*
+
+*Paper técnico disponible en el directorio papers del repositorio.*
+    `,
+  },
+  {
     slug: 'empathetic-language-bandwidth',
     title: 'Measuring Empathetic Language Bandwidth in LLMs',
     date: '2026-01-18',
