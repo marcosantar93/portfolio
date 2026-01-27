@@ -165,8 +165,6 @@ If you're evaluating LLM safety:
 ---
 
 *Repository with full code, data, and reproduction instructions: [GitHub - Crystallized Safety](https://github.com/marcosantar93/crystallized-safety)*
-
-*Technical paper available in the repository's papers directory.*
     `,
     contentEs: `
 ## La Pregunta
@@ -325,8 +323,6 @@ Si estás evaluando LLM safety:
 ---
 
 *Repositorio con código completo, datos e instrucciones de reproducción: [GitHub - Crystallized Safety](https://github.com/marcosantar93/crystallized-safety)*
-
-*Paper técnico disponible en el directorio papers del repositorio.*
     `,
   },
   {
