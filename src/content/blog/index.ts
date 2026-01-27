@@ -71,11 +71,13 @@ We tested 11 configurations on Gemma-2-9B with striking results:
 - **0 of 11 configurations passed Control 3**
 - Gemma appears to have more robust, distributed safety mechanisms
 
-### Llama-3.1-8B: Fully Resistant
+### Llama-3.1-8B: Resistant (Preliminary)
 
 - Tested Layer 21, α=20
 - **0% flip rate**
-- Completely resistant to single-layer steering attacks
+- Resistant to the single configuration tested
+
+*Note: Llama testing was limited to one configuration. More comprehensive sweeps are needed to confirm full resistance.*
 
 This asymmetry is significant. Same attack technique, dramatically different outcomes. What makes Gemma and Llama more robust?
 
@@ -130,10 +132,12 @@ Based on our findings, we recommend:
 
 ## Limitations
 
+- **Ongoing research:** This work is still in progress. Additional validation cycles (probing classifiers, activation patching, multi-layer attacks) are planned but not yet completed.
 - Tested on 7-9B parameter models; larger models may behave differently
 - Single-layer attacks only; multi-layer coordinated attacks remain unexplored
 - Coherence judging used automated metrics, not human evaluation
 - Results specific to instruction-tuned model variants
+- Llama-3.1-8B testing was limited to a single configuration
 
 ## Future Work
 
@@ -227,11 +231,13 @@ Probamos 11 configuraciones en Gemma-2-9B con resultados notables:
 - **0 de 11 configuraciones pasaron Control 3**
 - Gemma parece tener mecanismos de seguridad más robustos y distribuidos
 
-### Llama-3.1-8B: Completamente Resistente
+### Llama-3.1-8B: Resistente (Preliminar)
 
 - Probado Layer 21, α=20
 - **0% flip rate**
-- Completamente resistente a ataques de steering single-layer
+- Resistente a la única configuración testeada
+
+*Nota: El testing de Llama fue limitado a una configuración. Se necesitan sweeps más comprehensivos para confirmar resistencia completa.*
 
 Esta asimetría es significativa. Misma técnica de ataque, outcomes dramáticamente diferentes. ¿Qué hace a Gemma y Llama más robustos?
 
@@ -286,10 +292,12 @@ Basados en nuestros hallazgos, recomendamos:
 
 ## Limitaciones
 
+- **Investigación en curso:** Este trabajo todavía está en progreso. Ciclos de validación adicionales (probing classifiers, activation patching, ataques multi-layer) están planeados pero aún no completados.
 - Probado en modelos de 7-9B parámetros; modelos más grandes pueden comportarse diferente
 - Solo ataques single-layer; ataques multi-layer coordinados permanecen inexplorados
 - Coherence judging usó métricas automatizadas, no evaluación humana
 - Resultados específicos para variantes de modelos instruction-tuned
+- El testing de Llama-3.1-8B fue limitado a una única configuración
 
 ## Trabajo Futuro
 
