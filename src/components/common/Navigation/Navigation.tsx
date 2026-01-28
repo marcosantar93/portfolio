@@ -19,6 +19,7 @@ const Navigation: React.FC = () => {
   return (
     <nav className={styles.navigation}>
       <div className={styles.navContent}>
+        <div className={styles.spacer} />
         <div className={styles.navLinks}>
           {navItems.map((item) => (
             <NavLink
