@@ -38,7 +38,7 @@ const renderMarkdown = (markdown: string): string => {
     // Inline code
     .replace(/`([^`]+)`/g, '<code>$1</code>')
     // Unordered lists
-    .replace(/^\- (.*$)/gim, '<li>$1</li>')
+    .replace(/^- (.*$)/gim, '<li>$1</li>')
     .replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>')
     // Numbered lists
     .replace(/^\d+\. (.*$)/gim, '<li>$1</li>')
