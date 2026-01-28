@@ -10,16 +10,11 @@
 }
 
 .navContent {
-  max-width: var(--max-width);
-  margin: 0 auto;
+  max-width: 100%;
   padding: 20px var(--padding);
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  display: flex;
+  justify-content: center;
   align-items: center;
-}
-
-.spacer {
-  /* Empty spacer to balance the controls on the right */
 }
 
 .navLinks {
@@ -57,24 +52,20 @@
   background-color: var(--text-color);
 }
 
-/* Controls on the right, justified to end */
+/* Controls fixed to top right corner */
 .controls {
+  position: fixed;
+  top: 20px;
+  right: var(--padding);
   display: flex;
   align-items: center;
-  justify-content: flex-end;
   gap: 16px;
+  z-index: 101;
 }
 
 @media (max-width: 640px) {
   .navContent {
     padding: 12px var(--padding);
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .spacer {
-    display: none;
   }
 
   .navLinks {
@@ -93,7 +84,7 @@
   }
 
   .controls {
-    justify-content: center;
+    top: 12px;
     gap: 12px;
   }
 }

@@ -19,7 +19,6 @@ const Navigation: React.FC = () => {
   return (
     <nav className={styles.navigation}>
       <div className={styles.navContent}>
-        <div className={styles.spacer} />
         <div className={styles.navLinks}>
           {navItems.map((item) => (
             <NavLink
@@ -33,10 +32,10 @@ const Navigation: React.FC = () => {
             </NavLink>
           ))}
         </div>
-        <div className={styles.controls}>
-          <LanguageSelector />
-          <ThemeToggle />
-        </div>
+      </div>
+      <div className={styles.controls}>
+        <LanguageSelector />
+        <ThemeToggle />
       </div>
     </nav>
   );
