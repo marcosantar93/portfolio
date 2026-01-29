@@ -15,6 +15,8 @@ This is a follow-up to my [previous work on empathetic language bandwidth](/blog
 
 The council consists of four roles: Principal Investigator (research direction), Statistician (methodology rigor), Engineer (implementation), and Devil's Advocate (assumption challenging). Each experiment requires consensus before execution.
 
+**Note:** This validation was conducted on **Mistral-7B-Instruct-v0.3** specifically. The original bandwidth study covered 5 models; this follow-up focuses on rigorous validation of one model's findings.
+
 ## Key Findings
 
 ### 1. Cosine Similarity Between Probes is Broken
@@ -71,7 +73,7 @@ Length IS confounded with empathy type. But does it explain the structure?
 
 ### 4. Empathy Emerges at Layer 1
 
-We extracted activations from all 33 layers (embeddings + 32 transformer blocks) and computed cross-validated AUROC per layer.
+We extracted activations from all 33 layers (embeddings + 32 transformer blocks) for 30 empathy samples and computed cross-validated AUROC per layer.
 
 | Layer Range | Mean AUROC | Interpretation |
 |-------------|------------|----------------|
@@ -110,7 +112,7 @@ The critical question: is empathy structure entangled with formality, or indepen
 | Retention | **100%** |
 | Cosine(empathy, formality) | 0.35 |
 
-**Removing the formality direction has zero effect on empathy classification.** The cosine of 0.35 shows partial geometric alignment, but not enough to matter functionally.
+**Removing the formality direction has zero effect on empathy classification.** Notably, the cosine of 0.35 is actually at random baseline level (0.36)—meaning empathy and formality directions are no more aligned than random vectors would be.
 
 ## What This Means
 
@@ -166,7 +168,7 @@ The Devil's Advocate role proved crucial—it caught the length confound that co
 | Layer 1 emergence | Processed very early |
 | 100% independence from formality | Orthogonal features |
 
-**Bottom line:** Empathy structure in LLMs is real, emerges immediately, and is independent of other linguistic features. The original findings hold up under rigorous scrutiny.
+**Bottom line:** Empathy structure in Mistral-7B is real (not a length artifact), emerges immediately at Layer 1, and is completely independent of formality. The Mistral-7B findings from the original study hold up under rigorous scrutiny. Cross-model validation remains future work.
 
 ---
 
@@ -180,6 +182,8 @@ The Devil's Advocate role proved crucial—it caught the length confound that co
 Este es un seguimiento de mi [trabajo previo sobre empathetic language bandwidth](/blog/empathetic-language-bandwidth). Después de esos findings iniciales, implementé un **proceso de investigación council-driven** para validar rigurosamente los resultados y abordar posibles confounds.
 
 El council consiste en cuatro roles: Principal Investigator (dirección de investigación), Statistician (rigor metodológico), Engineer (implementación), y Devil's Advocate (cuestionamiento de suposiciones). Cada experimento requiere consenso antes de su ejecución.
+
+**Nota:** Esta validación se realizó específicamente en **Mistral-7B-Instruct-v0.3**. El estudio original de bandwidth cubrió 5 modelos; este seguimiento se enfoca en validación rigurosa de los findings de un modelo.
 
 ## Findings Clave
 
@@ -237,7 +241,7 @@ La longitud SÍ está confundida con tipo de empatía. ¿Pero explica la estruct
 
 ### 4. La Empatía Emerge en Layer 1
 
-Extrajimos activaciones de los 33 layers (embeddings + 32 transformer blocks) y computamos AUROC cross-validated por layer.
+Extrajimos activaciones de los 33 layers (embeddings + 32 transformer blocks) para 30 muestras de empatía y computamos AUROC cross-validated por layer.
 
 | Rango de Layer | AUROC Promedio | Interpretación |
 |----------------|----------------|----------------|
@@ -276,7 +280,7 @@ La pregunta crítica: ¿está la estructura de empatía entrelazada con formalid
 | Retención | **100%** |
 | Cosine(empatía, formalidad) | 0.35 |
 
-**Remover la dirección de formalidad tiene cero efecto en clasificación de empatía.** El cosine de 0.35 muestra alineamiento geométrico parcial, pero no suficiente para importar funcionalmente.
+**Remover la dirección de formalidad tiene cero efecto en clasificación de empatía.** Notablemente, el cosine de 0.35 está en realidad al nivel del baseline aleatorio (0.36)—lo que significa que las direcciones de empatía y formalidad no están más alineadas de lo que estarían vectores aleatorios.
 
 ## Qué Significa Esto
 
@@ -332,7 +336,7 @@ El rol de Devil's Advocate resultó crucial—detectó el confound de longitud q
 | Emergencia en Layer 1 | Procesado muy temprano |
 | 100% independencia de formalidad | Features ortogonales |
 
-**Conclusión:** La estructura de empatía en LLMs es real, emerge inmediatamente, y es independiente de otras features lingüísticas. Los findings originales se sostienen bajo escrutinio riguroso.
+**Conclusión:** La estructura de empatía en Mistral-7B es real (no un artefacto de longitud), emerge inmediatamente en Layer 1, y es completamente independiente de formalidad. Los findings de Mistral-7B del estudio original se sostienen bajo escrutinio riguroso. La validación cross-model queda como trabajo futuro.
 
 ---
 
