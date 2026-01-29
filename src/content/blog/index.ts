@@ -3,120 +3,130 @@ import { BlogPost } from '../../types';
 export const blogPosts: BlogPost[] = [
   {
     slug: 'empathy-structure-validated',
-    title: 'Empathy Structure is Universal: Validated Across 4 Models from 1.1B to 7B Parameters',
+    title: 'We Tried to Measure Empathy in LLMs. We Found a Broken Metric—Then Discovered Something Universal.',
     date: '2026-01-29',
-    excerpt: 'A council-driven research process validates that empathy structure in LLMs is real, emerges at Layer 1, is independent of formality, and generalizes across architectures. We also discovered that cosine similarity between probes is fundamentally broken as a metric.',
+    excerpt: 'How a failed experiment revealed that cosine similarity between probes is fundamentally broken, and what we discovered when we fixed the methodology: empathy structure is real, universal across architectures, and emerges at Layer 1.',
     tags: ['Mechanistic Interpretability', 'Empathy', 'Research Methodology', 'Cross-Model', 'Research'],
-    readTime: '10 min read',
+    readTime: '12 min read',
     content: `
-## Follow-Up: Validating Empathy Structure
+## The Original Question
 
-This is a follow-up to my [previous work on empathetic language bandwidth](/blog/empathetic-language-bandwidth). After those initial findings, I implemented a **council-driven research process** to rigorously validate the results and address potential confounds.
+Do large language models represent empathy as a single concept, or do they decompose it into distinct subtypes?
 
-The council consists of four roles: Principal Investigator (research direction), Statistician (methodology rigor), Engineer (implementation), and Devil's Advocate (assumption challenging). Each experiment requires consensus before execution.
+Psychologists have long distinguished between **cognitive empathy** (understanding someone's perspective), **affective empathy** (sharing their feelings), and **instrumental empathy** (offering practical help). We wanted to know: do LLMs encode these as separate "directions" in their activation space?
 
-**Note:** Initial validation was conducted on Mistral-7B-Instruct-v0.3. After establishing the methodology, we extended to cross-model testing.
+This matters for AI safety. If we can identify where empathy "lives" in a model, we might be able to steer it—making AI assistants more compassionate, or understanding when they're being manipulative.
 
-## Key Findings
+## The Standard Approach
 
-### 1. Cosine Similarity Between Probes is Broken
+We followed the representation engineering playbook:
 
-**This is a methodological warning for the field.**
+1. Generate scenarios with matched Cognitive, Affective, and Instrumental responses
+2. Extract activations from multiple LLMs
+3. Train linear probes to classify each empathy type
+4. Measure cosine similarity between the probe weight vectors
+5. If cosine < 0.5, the concepts are "distinct"
 
-Our initial analysis used cosine similarity between linear probe weight vectors to measure concept structure. The council challenged this: what if cosine reflects classifier geometry rather than concept-specific neural organization?
+Our initial results looked promising: **cos(Cognitive, Affective) = -0.29**. Negative cosine—the directions point in opposite directions! The empathy subtypes appear to occupy distinct subspaces!
 
-We tested by computing cosine similarity for:
-- Empathy probe directions
-- Random permuted labels (100 permutations)
+We were ready to write up the paper.
 
-**Result:** Random labels achieved cosine ~0.7—nearly identical to meaningful concepts. Cosine similarity doesn't distinguish real structure from noise.
+## The First Red Flag
 
-**Implication:** Studies claiming concept decomposition based on probe cosines should be re-evaluated.
+Then we ran a control experiment. What if we used random label permutations as a baseline?
 
-### 2. Four Alternative Metrics All Work
+We shuffled the labels randomly 100 times and computed cosines for each permutation. If empathy has real structure, it should show MORE separation than random.
 
-We tested four metrics that correctly distinguish empathy from random:
+**Result: Random labels achieved cosine ~0.7—nearly identical to meaningful concepts.**
 
-| Metric | Empathy | Random | Interpretation |
-|--------|---------|--------|----------------|
-| d-prime | **12.1** | 1.0 | Massive effect size |
-| Probe Agreement | **0.96** | 0.70 | Stable cross-validation |
-| Clustering Purity | **0.97** | 0.42 | Clear natural grouping |
-| AUROC | **1.00** | 0.44 | Perfect classification |
+Cosine similarity doesn't distinguish real structure from noise.
 
-All four metrics show empathy massively beats random. The d-prime of 12.1 is an enormous effect size—this isn't marginal.
+## The Council Process
 
-### 3. Empathy Structure Survives Length Residualization
+At this point, we convened a research council—multiple perspectives to stress-test the findings:
 
-The Devil's Advocate raised a critical concern: what if "empathy structure" is just response length? Cognitive responses might simply be longer.
+**Principal Investigator**: "Is this specific to empathy, or is the methodology broken?"
 
-**Confound Analysis:**
-- Chi-square test: p < 0.0001 (significant association)
-- Cognitive responses: 379 chars mean
-- Affective responses: 315 chars mean
+**Statistician**: "We need a gold-standard control. Something trivially separable."
 
-Length IS confounded with empathy type. But does it explain the structure?
+**Engineer**: "What about response length? It's computable from the text itself."
 
-**Residualization Experiment:**
-1. Regressed each activation dimension on response length
-2. Used residuals as "length-free" activations
-3. Recomputed all metrics
+**Devil's Advocate**: "If length fails too, we've learned something bigger than empathy."
 
-| Metric | Original | After Removing Length | % Retained |
-|--------|----------|----------------------|------------|
-| d-prime | 12.1 | **11.0** | 91% |
-| Probe Agreement | 0.96 | **0.86** | 90% |
-| Clustering Purity | 0.97 | **0.84** | 87% |
-| AUROC | 1.00 | **0.96** | 96% |
+## The Length Test
 
-**Length explains only 4.7% of activation variance.** After removing length, empathy structure retains 91% of its signal. Empathy is NOT a length artifact.
+We binned responses by character length (Short: ~300 chars, Medium: ~346 chars, Long: ~396 chars). Clearly different. Trivially separable. If our methodology works, length should beat random.
 
-### 4. Empathy Emerges at Layer 1
+**Result:** Length ALSO showed poor cosine performance. Even a trivially different feature—one you can compute with \`len()\`—failed the cosine test.
 
-We extracted activations from all 33 layers (embeddings + 32 transformer blocks) for 30 empathy samples and computed cross-validated AUROC per layer.
+## The Breakthrough
 
-| Layer Range | Mean AUROC | Interpretation |
-|-------------|------------|----------------|
-| Layer 0 (embeddings) | 0.50 | No signal |
-| Layer 1-7 (early) | 0.93 | Strong emergence |
-| Layer 8-23 (middle) | 0.99 | Near-perfect |
-| Layer 24-32 (late) | 0.98 | Maintained |
-| Random baseline | 0.53 | Chance level |
+The statistician proposed: what if we measure classification accuracy (AUROC) instead of cosine similarity?
 
-**Empathy structure appears immediately at Layer 1** (AUROC = 0.96) and peaks at Layer 2 (AUROC = 1.0). This is much earlier than expected—most semantic concepts emerge in middle-to-late layers.
+| Feature | AUROC | Cosine Performance |
+|---------|-------|-------------------|
+| Length | **0.96** | Poor |
+| Empathy | **1.00** | Poor |
 
-### 5. Early Emergence is Not Empathy-Specific
+**The probes achieve near-perfect classification.** AUROC of 0.96-1.0 means the linear probes CAN find the structure. They successfully distinguish cognitive from affective empathy.
 
-Is Layer 1 emergence special to empathy? We compared against formality (formal vs. casual language):
+But the cosine metric says they're no better than random.
 
-| Feature | Emergence Layer | Peak Layer | Peak AUROC |
-|---------|-----------------|------------|------------|
-| Empathy | Layer 1 | Layer 2 | 1.00 |
-| Formality | Layer 1 | Layer 1 | 1.00 |
+**The probes work. The metric doesn't.**
 
-Both features emerge at Layer 1 with identical patterns. Early emergence is a general property of discriminable linguistic features, not empathy-specific.
+## Why Cosines Fail
 
-### 6. Empathy is 100% Independent of Formality
+Here's the geometry: binary logistic regression finds a hyperplane that separates two classes. The weight vector points toward the positive class.
 
-The critical question: is empathy structure entangled with formality, or independent?
+When you train separate probes for different concepts, each probe's weights point toward its respective positive class. These directions are naturally different—that's the whole point. The resulting cosines reflect **classifier geometry, not concept structure**.
 
-**Experiment:**
-1. Computed formality direction from probe weights
-2. Projected formality out of empathy activations
-3. Measured empathy classification on residualized activations
+---
 
-| Metric | Value |
-|--------|-------|
-| Original empathy AUROC | 1.000 |
-| After removing formality | 1.000 |
+# Part 2: What We Found When We Fixed the Methodology
+
+With proper metrics in hand (AUROC, d-prime, clustering purity), we could finally answer our original questions—and discovered something surprising.
+
+## Where Does Empathy Emerge?
+
+We extracted activations from all 33 layers of Mistral-7B and computed empathy classification accuracy at each layer.
+
+| Layer Range | Mean AUROC |
+|-------------|------------|
+| Layer 0 (embeddings) | 0.50 (chance) |
+| Layer 1 | **0.96** |
+| Layers 2-7 | 0.93-1.00 |
+| Layers 8-32 | 0.98-1.00 |
+
+**Empathy emerges at Layer 1**—immediately after the embedding layer—and maintains near-perfect separability through the entire network.
+
+This was surprising. We expected semantic concepts like empathy to emerge in middle or late layers. Instead, the model encodes empathy type almost immediately.
+
+## Is This Empathy-Specific?
+
+We tested a control: **formality** (formal vs. casual versions of the same content).
+
+| Feature | Emergence Layer | Peak AUROC |
+|---------|-----------------|------------|
+| Empathy | Layer 1 | 1.00 |
+| Formality | Layer 1 | 1.00 |
+
+Both emerge at Layer 1. Early emergence isn't empathy-specific—it's how the model encodes discriminable linguistic features in general.
+
+## But Are They The Same Thing?
+
+If empathy and formality both emerge early, maybe they're entangled? Maybe "cognitive empathy" is just "formal language"?
+
+We tested this by **projecting out the formality direction** from empathy activations. If empathy is just formality in disguise, removing formality should destroy the empathy signal.
+
+| Condition | Empathy AUROC |
+|-----------|---------------|
+| Original | 1.000 |
+| After removing formality | **1.000** |
 | Retention | **100%** |
-| Cosine(empathy, formality) | 0.35 |
 
-**Removing the formality direction has zero effect on empathy classification.** Notably, the cosine of 0.35 is actually at random baseline level (0.36)—meaning empathy and formality directions are no more aligned than random vectors would be.
+**Zero information loss.** Empathy and formality occupy orthogonal subspaces. The cosine between them (0.35) is at random baseline level—they're no more aligned than random vectors would be.
 
-### 7. Empathy Generalizes Across Models
-
-The critical question: is this Mistral-specific, or a universal property of language models?
+## Does This Generalize Across Models?
 
 We tested 4 models spanning different architectures and scales:
 
@@ -127,7 +137,7 @@ We tested 4 models spanning different architectures and scales:
 | Qwen2.5-3B | 3B | **1.000** | 0.40 |
 | Mistral-7B | 7B | **1.000** | 0.47 |
 
-**All 4 models show near-perfect empathy classification** (AUROC > 0.97), massively above random baseline (~0.45).
+**All 4 models show near-perfect empathy classification.**
 
 Even more striking: the effect size (d-prime) is remarkably consistent:
 
@@ -140,178 +150,203 @@ Even more striking: the effect size (d-prime) is remarkably consistent:
 
 The d-prime hovers around **1.75 regardless of model size or architecture**. This suggests empathy structure is a **fundamental property** of how language models encode text, not an artifact of specific training.
 
-## What This Means
+## Controlling for Length
 
-### For AI Safety
+The Devil's Advocate raised one more concern: what if "empathy structure" is just response length?
 
-If you want to steer empathy in LLM outputs, you can do so **without affecting formality** (and vice versa). The directions are sufficiently orthogonal for targeted intervention. This has practical implications for building more controllable systems.
+**Confound Analysis:**
+- Chi-square test: p < 0.0001 (significant association)
+- Cognitive responses: 379 chars mean
+- Affective responses: 315 chars mean
 
-### For Interpretability Research
+Length IS confounded with empathy type. But does it explain the structure?
 
-1. **Don't use cosine similarity between probes** to measure concept structure—it's broken
-2. **Use AUROC, d-prime, probe agreement, or clustering purity** instead
-3. **Always check for confounds** (length, formality, etc.) and residualize
-4. **Layer-wise analysis reveals processing dynamics**—empathy is computed very early
+We regressed length out of the activations and recomputed all metrics:
 
-### For Understanding LLM Cognition
+| Metric | Original | After Removing Length | % Retained |
+|--------|----------|----------------------|------------|
+| d-prime | 12.1 | **11.0** | 91% |
+| AUROC | 1.00 | **0.96** | 96% |
 
-The model encodes empathy and formality as **orthogonal linguistic features** that both emerge immediately after embeddings. This suggests:
-
-- Early layers encode multiple discriminable features simultaneously
-- These features occupy distinct subspaces despite early emergence
-- Empathy is not reducible to surface-level stylistic differences
-
-## Metric Recommendations
-
-Based on this work, here's a practical guide:
-
-| Metric | Use For | Threshold |
-|--------|---------|-----------|
-| AUROC | Classification accuracy | >0.9 = strong |
-| d-prime | Effect size | >2 = meaningful |
-| Probe Agreement | Cross-validation | >0.8 = stable |
-| Clustering Purity | Natural grouping | >0.8 = clear |
-| **Cosine** | **DO NOT USE** | Broken |
-
-## Methodology: Council Process
-
-Each cycle followed this protocol:
-
-1. **Proposal** - PI proposes experiment
-2. **Review** - Statistician, Engineer, Devil's Advocate critique
-3. **Consensus** - Green light only when all concerns addressed
-4. **Execution** - Run experiment (Mistral-7B on RunPod GPU)
-5. **Analysis** - Interpret and plan next cycle
-
-The Devil's Advocate role proved crucial—it caught the length confound that could have invalidated our conclusions.
-
-## Summary
-
-| Finding | Implication |
-|---------|-------------|
-| Cosine broken | Use AUROC/d-prime instead |
-| 91% retention after length | Empathy is real, not artifact |
-| Layer 1 emergence | Processed very early |
-| 100% independence from formality | Orthogonal features |
-| 4/4 models pass | Universal property |
-
-**Bottom line:** Empathy structure in language models is real, emerges immediately at Layer 1, is completely independent of formality, and **generalizes across architectures from 1.1B to 7B parameters**. The consistent d-prime (~1.75) across all models suggests this is a fundamental property of how LLMs encode language.
+**Length explains only 4.7% of activation variance.** After removing length, empathy structure retains 91% of its signal. Empathy is NOT a length artifact.
 
 ---
 
-*Repository with full code and data: [GitHub - Empathetic Language Bandwidth](https://github.com/marcosantar93/empathetic-language-bandwidth)*
+## What This Means
 
-*This follow-up validates and extends the [original empathetic bandwidth study](/blog/empathetic-language-bandwidth).*
+### For Representation Engineering
+
+The cosine similarity metric is broken. Don't use it for measuring concept relationships. Use instead:
+
+1. **AUROC** for classification accuracy
+2. **D-prime** for effect size
+3. **Null distribution testing** for statistical validity
+4. **Control conditions** for specificity
+
+### For Empathy in AI
+
+Empathy subtypes ARE represented distinctly in language models:
+- AUROC = 1.0 (perfect classification)
+- Independent of surface features like formality
+- Universal across architectures (1B to 7B parameters)
+- Emerges at Layer 1 and persists throughout
+
+This is good news for AI safety. Empathy representations are:
+- **Detectable**: Linear probes achieve perfect accuracy
+- **Steerable**: Distinct directions can be amplified or suppressed
+- **Generalizable**: Findings transfer across models
+
+### For AI Safety Research
+
+You can study empathy (and likely other concepts) in small models:
+- TinyLlama (1.1B) shows the same structure as Mistral (7B)
+- Faster iteration, lower cost, same insights
+- Scale up only when necessary
+
+---
+
+## The Journey
+
+We started trying to measure empathy decomposition. We discovered a broken methodology that probably affects many published results. When we fixed it, we found that empathy structure is real, robust, and universal.
+
+The lesson: **stress-test your metrics**. When a metric gives you the answer you expect, that's exactly when you should question it hardest.
+
+And sometimes, the failed experiment leads you somewhere more interesting than where you were headed.
+
+---
+
+*Code and data: [GitHub - Empathetic Language Bandwidth](https://github.com/marcosantar93/empathetic-language-bandwidth)*
+
+*Full technical reports: See COUNCIL_REPORT.md, COUNCIL_REPORT_ROUND2.md, COUNCIL_REPORT_ROUND3.md in the repository*
+
+---
+
+**TL;DR:**
+1. The standard metric (cosine similarity between probes) is broken—it reflects classifier geometry, not concept structure
+2. With proper metrics, empathy subtypes ARE distinctly represented (AUROC = 1.0)
+3. Empathy emerges at Layer 1 and is independent of surface features like formality
+4. This generalizes across 4 models from 1.1B to 7B parameters
+5. Empathy structure appears to be a fundamental property of language models
     `,
     contentEs: `
-## Seguimiento: Validando la Estructura de Empatía
+## La Pregunta Original
 
-Este es un seguimiento de mi [trabajo previo sobre empathetic language bandwidth](/blog/empathetic-language-bandwidth). Después de esos findings iniciales, implementé un **proceso de investigación council-driven** para validar rigurosamente los resultados y abordar posibles confounds.
+¿Los large language models representan empatía como un concepto único, o lo descomponen en subtipos distintos?
 
-El council consiste en cuatro roles: Principal Investigator (dirección de investigación), Statistician (rigor metodológico), Engineer (implementación), y Devil's Advocate (cuestionamiento de suposiciones). Cada experimento requiere consenso antes de su ejecución.
+Los psicólogos han distinguido por mucho tiempo entre **empatía cognitiva** (entender la perspectiva de alguien), **empatía afectiva** (compartir sus sentimientos), y **empatía instrumental** (ofrecer ayuda práctica). Queríamos saber: ¿los LLMs codifican estos como "direcciones" separadas en su espacio de activación?
 
-**Nota:** La validación inicial se realizó en Mistral-7B-Instruct-v0.3. Después de establecer la metodología, extendimos a testing cross-model.
+Esto importa para AI safety. Si podemos identificar dónde "vive" la empatía en un modelo, podríamos hacer steering—haciendo asistentes de IA más compasivos, o entendiendo cuándo están siendo manipuladores.
 
-## Findings Clave
+## El Approach Estándar
 
-### 1. Cosine Similarity Entre Probes Está Rota
+Seguimos el playbook de representation engineering:
 
-**Esta es una advertencia metodológica para el campo.**
+1. Generar escenarios con respuestas Cognitivas, Afectivas e Instrumentales matcheadas
+2. Extraer activaciones de múltiples LLMs
+3. Entrenar linear probes para clasificar cada tipo de empatía
+4. Medir cosine similarity entre los vectores de pesos de los probes
+5. Si cosine < 0.5, los conceptos son "distintos"
 
-Nuestro análisis inicial usó cosine similarity entre vectores de pesos de linear probes para medir estructura de conceptos. El council cuestionó esto: ¿y si cosine refleja geometría del clasificador en lugar de organización neural específica del concepto?
+Nuestros resultados iniciales parecían prometedores: **cos(Cognitivo, Afectivo) = -0.29**. Cosine negativo—¡las direcciones apuntan en direcciones opuestas! ¡Los subtipos de empatía parecen ocupar subspaces distintos!
 
-Probamos computando cosine similarity para:
-- Direcciones de empathy probe
-- Labels permutados aleatoriamente (100 permutaciones)
+Estábamos listos para escribir el paper.
 
-**Resultado:** Labels aleatorios alcanzaron cosine ~0.7—casi idéntico a conceptos significativos. Cosine similarity no distingue estructura real de ruido.
+## La Primera Red Flag
 
-**Implicación:** Estudios que afirman descomposición de conceptos basados en cosines de probes deberían ser reevaluados.
+Luego corrimos un experimento de control. ¿Qué si usábamos permutaciones de labels aleatorias como baseline?
 
-### 2. Cuatro Métricas Alternativas Funcionan
+Shuffleamos los labels aleatoriamente 100 veces y computamos cosines para cada permutación. Si la empatía tiene estructura real, debería mostrar MÁS separación que aleatorio.
 
-Probamos cuatro métricas que correctamente distinguen empatía de aleatorio:
+**Resultado: Labels aleatorios alcanzaron cosine ~0.7—casi idéntico a conceptos significativos.**
 
-| Métrica | Empatía | Aleatorio | Interpretación |
-|---------|---------|-----------|----------------|
-| d-prime | **12.1** | 1.0 | Effect size masivo |
-| Probe Agreement | **0.96** | 0.70 | Cross-validation estable |
-| Clustering Purity | **0.97** | 0.42 | Agrupamiento natural claro |
-| AUROC | **1.00** | 0.44 | Clasificación perfecta |
+Cosine similarity no distingue estructura real de ruido.
 
-Las cuatro métricas muestran que empatía supera masivamente a aleatorio. El d-prime de 12.1 es un effect size enorme—esto no es marginal.
+## El Proceso de Council
 
-### 3. La Estructura de Empatía Sobrevive Length Residualization
+En este punto, convocamos un research council—múltiples perspectivas para stress-testear los findings:
 
-El Devil's Advocate planteó una preocupación crítica: ¿y si "estructura de empatía" es solo longitud de respuesta? Las respuestas cognitivas podrían simplemente ser más largas.
+**Principal Investigator**: "¿Es esto específico de empatía, o la metodología está rota?"
 
-**Análisis de Confound:**
-- Chi-square test: p < 0.0001 (asociación significativa)
-- Respuestas cognitivas: 379 caracteres promedio
-- Respuestas afectivas: 315 caracteres promedio
+**Statistician**: "Necesitamos un control gold-standard. Algo trivialmente separable."
 
-La longitud SÍ está confundida con tipo de empatía. ¿Pero explica la estructura?
+**Engineer**: "¿Qué tal longitud de respuesta? Es computable del texto mismo."
 
-**Experimento de Residualización:**
-1. Regresamos cada dimensión de activación sobre longitud de respuesta
-2. Usamos residuales como activaciones "libres de longitud"
-3. Recomputamos todas las métricas
+**Devil's Advocate**: "Si longitud también falla, aprendimos algo más grande que empatía."
 
-| Métrica | Original | Después de Remover Longitud | % Retenido |
-|---------|----------|----------------------------|------------|
-| d-prime | 12.1 | **11.0** | 91% |
-| Probe Agreement | 0.96 | **0.86** | 90% |
-| Clustering Purity | 0.97 | **0.84** | 87% |
-| AUROC | 1.00 | **0.96** | 96% |
+## El Test de Longitud
 
-**La longitud explica solo 4.7% de la varianza de activación.** Después de remover longitud, la estructura de empatía retiene 91% de su señal. La empatía NO es un artefacto de longitud.
+Agrupamos respuestas por longitud de caracteres (Cortas: ~300 chars, Medianas: ~346 chars, Largas: ~396 chars). Claramente diferentes. Trivialmente separables. Si nuestra metodología funciona, longitud debería superar aleatorio.
 
-### 4. La Empatía Emerge en Layer 1
+**Resultado:** Longitud TAMBIÉN mostró pobre performance de cosine. Incluso una feature trivialmente diferente—una que podés computar con \`len()\`—falló el test de cosine.
 
-Extrajimos activaciones de los 33 layers (embeddings + 32 transformer blocks) para 30 muestras de empatía y computamos AUROC cross-validated por layer.
+## El Breakthrough
 
-| Rango de Layer | AUROC Promedio | Interpretación |
-|----------------|----------------|----------------|
-| Layer 0 (embeddings) | 0.50 | Sin señal |
-| Layer 1-7 (temprano) | 0.93 | Emergencia fuerte |
-| Layer 8-23 (medio) | 0.99 | Casi perfecto |
-| Layer 24-32 (tardío) | 0.98 | Mantenido |
-| Baseline aleatorio | 0.53 | Nivel de chance |
+El statistician propuso: ¿qué si medimos precisión de clasificación (AUROC) en lugar de cosine similarity?
 
-**La estructura de empatía aparece inmediatamente en Layer 1** (AUROC = 0.96) y alcanza su pico en Layer 2 (AUROC = 1.0). Esto es mucho más temprano de lo esperado—la mayoría de conceptos semánticos emergen en layers medio-tardíos.
+| Feature | AUROC | Performance Cosine |
+|---------|-------|-------------------|
+| Longitud | **0.96** | Pobre |
+| Empatía | **1.00** | Pobre |
 
-### 5. La Emergencia Temprana No Es Específica de Empatía
+**Los probes logran clasificación casi perfecta.** AUROC de 0.96-1.0 significa que los linear probes PUEDEN encontrar la estructura. Distinguen exitosamente empatía cognitiva de afectiva.
 
-¿Es la emergencia en Layer 1 especial para empatía? Comparamos contra formalidad (lenguaje formal vs. casual):
+Pero la métrica de cosine dice que no son mejores que aleatorio.
 
-| Feature | Layer de Emergencia | Layer Pico | AUROC Pico |
-|---------|---------------------|------------|------------|
-| Empatía | Layer 1 | Layer 2 | 1.00 |
-| Formalidad | Layer 1 | Layer 1 | 1.00 |
+**Los probes funcionan. La métrica no.**
 
-Ambas features emergen en Layer 1 con patrones idénticos. La emergencia temprana es una propiedad general de features lingüísticas discriminables, no específica de empatía.
+## Por Qué Cosines Falla
 
-### 6. La Empatía es 100% Independiente de Formalidad
+Acá está la geometría: la regresión logística binaria encuentra un hiperplano que separa dos clases. El vector de pesos apunta hacia la clase positiva.
 
-La pregunta crítica: ¿está la estructura de empatía entrelazada con formalidad, o es independiente?
+Cuando entrenás probes separados para diferentes conceptos, los pesos de cada probe apuntan hacia su respectiva clase positiva. Estas direcciones son naturalmente diferentes—ese es el punto. Los cosines resultantes reflejan **geometría del clasificador, no estructura de conceptos**.
 
-**Experimento:**
-1. Computamos dirección de formalidad desde pesos de probe
-2. Proyectamos formalidad fuera de activaciones de empatía
-3. Medimos clasificación de empatía en activaciones residualizadas
+---
 
-| Métrica | Valor |
-|---------|-------|
-| AUROC de empatía original | 1.000 |
-| Después de remover formalidad | 1.000 |
+# Parte 2: Lo Que Encontramos Cuando Arreglamos la Metodología
+
+Con métricas apropiadas en mano (AUROC, d-prime, clustering purity), pudimos finalmente responder nuestras preguntas originales—y descubrimos algo sorprendente.
+
+## ¿Dónde Emerge la Empatía?
+
+Extrajimos activaciones de los 33 layers de Mistral-7B y computamos precisión de clasificación de empatía en cada layer.
+
+| Rango de Layer | AUROC Promedio |
+|----------------|----------------|
+| Layer 0 (embeddings) | 0.50 (chance) |
+| Layer 1 | **0.96** |
+| Layers 2-7 | 0.93-1.00 |
+| Layers 8-32 | 0.98-1.00 |
+
+**La empatía emerge en Layer 1**—inmediatamente después del embedding layer—y mantiene separabilidad casi perfecta a través de toda la red.
+
+Esto fue sorprendente. Esperábamos que conceptos semánticos como empatía emergieran en layers medios o tardíos. En cambio, el modelo codifica tipo de empatía casi inmediatamente.
+
+## ¿Es Esto Específico de Empatía?
+
+Probamos un control: **formalidad** (versiones formales vs. casuales del mismo contenido).
+
+| Feature | Layer de Emergencia | AUROC Pico |
+|---------|---------------------|------------|
+| Empatía | Layer 1 | 1.00 |
+| Formalidad | Layer 1 | 1.00 |
+
+Ambas emergen en Layer 1. La emergencia temprana no es específica de empatía—es cómo el modelo codifica features lingüísticas discriminables en general.
+
+## ¿Pero Son Lo Mismo?
+
+Si empatía y formalidad emergen temprano, ¿quizás están entrelazadas? ¿Quizás "empatía cognitiva" es solo "lenguaje formal"?
+
+Probamos esto **proyectando la dirección de formalidad** fuera de las activaciones de empatía. Si empatía es solo formalidad disfrazada, remover formalidad debería destruir la señal de empatía.
+
+| Condición | AUROC Empatía |
+|-----------|---------------|
+| Original | 1.000 |
+| Después de remover formalidad | **1.000** |
 | Retención | **100%** |
-| Cosine(empatía, formalidad) | 0.35 |
 
-**Remover la dirección de formalidad tiene cero efecto en clasificación de empatía.** Notablemente, el cosine de 0.35 está en realidad al nivel del baseline aleatorio (0.36)—lo que significa que las direcciones de empatía y formalidad no están más alineadas de lo que estarían vectores aleatorios.
+**Cero pérdida de información.** Empatía y formalidad ocupan subspaces ortogonales. El cosine entre ellas (0.35) está al nivel del baseline aleatorio—no están más alineadas de lo que vectores aleatorios estarían.
 
-### 7. La Empatía Generaliza Entre Modelos
-
-La pregunta crítica: ¿es esto específico de Mistral, o una propiedad universal de language models?
+## ¿Generaliza Entre Modelos?
 
 Probamos 4 modelos que abarcan diferentes arquitecturas y escalas:
 
@@ -322,7 +357,7 @@ Probamos 4 modelos que abarcan diferentes arquitecturas y escalas:
 | Qwen2.5-3B | 3B | **1.000** | 0.40 |
 | Mistral-7B | 7B | **1.000** | 0.47 |
 
-**Los 4 modelos muestran clasificación de empatía casi perfecta** (AUROC > 0.97), masivamente por encima del baseline aleatorio (~0.45).
+**Los 4 modelos muestran clasificación de empatía casi perfecta.**
 
 Aún más notable: el effect size (d-prime) es consistente:
 
@@ -333,70 +368,80 @@ Aún más notable: el effect size (d-prime) es consistente:
 | Qwen2.5-3B | 1.78 |
 | Mistral-7B | 1.76 |
 
-El d-prime se mantiene alrededor de **1.75 sin importar el tamaño o arquitectura del modelo**. Esto sugiere que la estructura de empatía es una **propiedad fundamental** de cómo los language models codifican texto, no un artefacto de training específico.
+El d-prime se mantiene alrededor de **1.75 sin importar tamaño o arquitectura del modelo**. Esto sugiere que la estructura de empatía es una **propiedad fundamental** de cómo los language models codifican texto.
 
-## Qué Significa Esto
+## Controlando por Longitud
 
-### Para AI Safety
+El Devil's Advocate planteó una preocupación más: ¿y si "estructura de empatía" es solo longitud de respuesta?
 
-Si querés hacer steering de empatía en outputs de LLM, podés hacerlo **sin afectar formalidad** (y viceversa). Las direcciones son suficientemente ortogonales para intervención targeted. Esto tiene implicaciones prácticas para construir sistemas más controlables.
+La longitud SÍ está confundida con tipo de empatía (p < 0.0001). ¿Pero explica la estructura?
 
-### Para Interpretability Research
+Regresamos longitud fuera de las activaciones y recomputamos las métricas:
 
-1. **No uses cosine similarity entre probes** para medir estructura de conceptos—está rota
-2. **Usá AUROC, d-prime, probe agreement, o clustering purity** en su lugar
-3. **Siempre verificá confounds** (longitud, formalidad, etc.) y residualizá
-4. **El análisis layer-wise revela dinámicas de procesamiento**—la empatía se computa muy temprano
+| Métrica | Original | Después de Remover Longitud | % Retenido |
+|---------|----------|----------------------------|------------|
+| d-prime | 12.1 | **11.0** | 91% |
+| AUROC | 1.00 | **0.96** | 96% |
 
-### Para Entender Cognición de LLM
-
-El modelo codifica empatía y formalidad como **features lingüísticas ortogonales** que ambas emergen inmediatamente después de embeddings. Esto sugiere:
-
-- Los layers tempranos codifican múltiples features discriminables simultáneamente
-- Estas features ocupan subspaces distintos a pesar de emergencia temprana
-- La empatía no es reducible a diferencias estilísticas superficiales
-
-## Recomendaciones de Métricas
-
-Basado en este trabajo, acá hay una guía práctica:
-
-| Métrica | Usar Para | Threshold |
-|---------|-----------|-----------|
-| AUROC | Precisión de clasificación | >0.9 = fuerte |
-| d-prime | Effect size | >2 = significativo |
-| Probe Agreement | Cross-validation | >0.8 = estable |
-| Clustering Purity | Agrupamiento natural | >0.8 = claro |
-| **Cosine** | **NO USAR** | Rota |
-
-## Metodología: Proceso de Council
-
-Cada ciclo siguió este protocolo:
-
-1. **Propuesta** - PI propone experimento
-2. **Revisión** - Statistician, Engineer, Devil's Advocate critican
-3. **Consenso** - Green light solo cuando todas las preocupaciones se abordan
-4. **Ejecución** - Ejecutar experimento (Mistral-7B en RunPod GPU)
-5. **Análisis** - Interpretar y planificar siguiente ciclo
-
-El rol de Devil's Advocate resultó crucial—detectó el confound de longitud que podría haber invalidado nuestras conclusiones.
-
-## Resumen
-
-| Finding | Implicación |
-|---------|-------------|
-| Cosine roto | Usar AUROC/d-prime en su lugar |
-| 91% retención después de longitud | Empatía es real, no artefacto |
-| Emergencia en Layer 1 | Procesado muy temprano |
-| 100% independencia de formalidad | Features ortogonales |
-| 4/4 modelos pasan | Propiedad universal |
-
-**Conclusión:** La estructura de empatía en language models es real, emerge inmediatamente en Layer 1, es completamente independiente de formalidad, y **generaliza entre arquitecturas desde 1.1B hasta 7B parámetros**. El d-prime consistente (~1.75) en todos los modelos sugiere que esta es una propiedad fundamental de cómo los LLMs codifican lenguaje.
+**La longitud explica solo 4.7% de varianza de activación.** Después de remover longitud, la estructura de empatía retiene 91% de su señal. La empatía NO es un artefacto de longitud.
 
 ---
 
-*Repositorio con código completo y datos: [GitHub - Empathetic Language Bandwidth](https://github.com/marcosantar93/empathetic-language-bandwidth)*
+## Qué Significa Esto
 
-*Este seguimiento valida y extiende el [estudio original de empathetic bandwidth](/blog/empathetic-language-bandwidth).*
+### Para Representation Engineering
+
+La métrica de cosine similarity está rota. No la uses para medir relaciones de conceptos. Usá en cambio:
+
+1. **AUROC** para precisión de clasificación
+2. **D-prime** para effect size
+3. **Null distribution testing** para validez estadística
+4. **Control conditions** para especificidad
+
+### Para Empatía en IA
+
+Los subtipos de empatía SÍ están representados distintamente en language models:
+- AUROC = 1.0 (clasificación perfecta)
+- Independiente de features superficiales como formalidad
+- Universal entre arquitecturas (1B a 7B parámetros)
+- Emerge en Layer 1 y persiste a través de todo
+
+Esto es buena noticia para AI safety. Las representaciones de empatía son:
+- **Detectables**: Linear probes logran precisión perfecta
+- **Steereables**: Direcciones distintas pueden amplificarse o suprimirse
+- **Generalizables**: Los findings se transfieren entre modelos
+
+### Para AI Safety Research
+
+Podés estudiar empatía (y probablemente otros conceptos) en modelos pequeños:
+- TinyLlama (1.1B) muestra la misma estructura que Mistral (7B)
+- Iteración más rápida, menor costo, mismos insights
+- Escalá solo cuando sea necesario
+
+---
+
+## El Viaje
+
+Empezamos tratando de medir descomposición de empatía. Descubrimos una metodología rota que probablemente afecta muchos resultados publicados. Cuando la arreglamos, encontramos que la estructura de empatía es real, robusta y universal.
+
+La lección: **stress-testeá tus métricas**. Cuando una métrica te da la respuesta que esperás, ese es exactamente el momento de cuestionarla más fuerte.
+
+Y a veces, el experimento fallido te lleva a algún lugar más interesante que donde ibas.
+
+---
+
+*Código y datos: [GitHub - Empathetic Language Bandwidth](https://github.com/marcosantar93/empathetic-language-bandwidth)*
+
+*Reportes técnicos completos: Ver COUNCIL_REPORT.md, COUNCIL_REPORT_ROUND2.md, COUNCIL_REPORT_ROUND3.md en el repositorio*
+
+---
+
+**TL;DR:**
+1. La métrica estándar (cosine similarity entre probes) está rota—refleja geometría del clasificador, no estructura de conceptos
+2. Con métricas apropiadas, los subtipos de empatía SÍ están representados distintamente (AUROC = 1.0)
+3. La empatía emerge en Layer 1 y es independiente de features superficiales como formalidad
+4. Esto generaliza entre 4 modelos desde 1.1B hasta 7B parámetros
+5. La estructura de empatía parece ser una propiedad fundamental de los language models
     `,
   },
   {
