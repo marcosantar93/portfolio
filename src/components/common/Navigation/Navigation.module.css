@@ -63,15 +63,16 @@
   z-index: 101;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .navContent {
     padding: 12px var(--padding);
+    padding-right: 100px; /* Leave room for controls */
   }
 
   .navLinks {
-    gap: 16px;
+    gap: 12px;
     font-size: 0.85rem;
-    justify-content: center;
+    justify-content: flex-start;
     flex-wrap: wrap;
   }
 
@@ -85,6 +86,26 @@
 
   .controls {
     top: 12px;
-    gap: 12px;
+    gap: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .navContent {
+    padding: 12px 16px;
+    padding-right: 90px;
+  }
+
+  .navLinks {
+    gap: 8px;
+  }
+
+  .navLink {
+    font-size: 0.75rem;
+  }
+
+  .controls {
+    right: 16px;
+    gap: 6px;
   }
 }
