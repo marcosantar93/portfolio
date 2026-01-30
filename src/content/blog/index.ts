@@ -58,7 +58,7 @@ The Z-score was *positive*. Empathy labels produced LESS separation than random 
 
 At this point, we convened a research council—multiple perspectives to stress-test the findings:
 
-**Principal Investigator**: "Is this specific to empathy, or is the methodology broken?"
+**Principal Investigator**: "Is this specific to empathy, or is there something wrong with our metric?"
 
 **Statistician**: "We need a gold-standard control. Something trivially separable."
 
@@ -105,6 +105,19 @@ Random label permutations maximize this effect because they create maximally dis
 **The negative cosines reflect classifier geometry, not concept structure.**
 
 This finding aligns with recent work questioning cosine similarity in embedding spaces. [Steck et al. (2024)](https://arxiv.org/abs/2403.05440) showed that cosine similarity can yield "arbitrary and therefore meaningless similarities" depending on regularization choices. [Park et al.](https://arxiv.org/abs/2311.03658) demonstrated that the standard Euclidean inner product may not be appropriate for representation spaces.
+
+## Theoretical Context: The Read/Write Distinction
+
+Why does this happen architecturally? [Liv Gorton's work on non-linear feature representations](https://livgorton.com/non-linear-feature-reps) provides useful framing:
+
+- Transformers **"write"** to the residual stream additively—features are superimposed
+- But **"reading"** (recovering features) can involve different strategies
+- Linear probes successfully "read" empathy structure (AUROC = 1.0)—they find the information
+- But comparing their weight vectors with cosine measures something else entirely
+
+The probes are solving *different classification problems*. Each probe's weight vector points toward its own positive class. These directions are naturally different—that's what makes classification work. The cosine between them reflects this classifier geometry, not whether the underlying concepts share neural structure.
+
+This is why the metric fails for this use case: we're measuring properties of the classifiers, not properties of what they classify.
 
 **Scope of this finding**: This issue is specific to comparing weights of *separately-trained* binary probes. Cosine similarity remains valid for other uses in representation engineering—for example, measuring alignment between a steering vector and a target direction extracted via the same contrastive method.
 
@@ -345,6 +358,7 @@ And sometimes, the failed experiment leads you somewhere more interesting than w
 
 - Steck, H., et al. (2024). "[Is Cosine-Similarity of Embeddings Really About Similarity?](https://arxiv.org/abs/2403.05440)" *ArXiv*.
 - Park, K., et al. (2023). "[The Linear Representation Hypothesis and the Geometry of Large Language Models](https://arxiv.org/abs/2311.03658)" *ArXiv*.
+- Gorton, L. (2024). "[Non-linear feature representations in steering vectors](https://livgorton.com/non-linear-feature-reps)" *Blog*.
 - Zou, A., et al. (2023). "[Representation Engineering: A Top-Down Approach to AI Transparency](https://arxiv.org/abs/2310.01405)" *ArXiv*.
 - Wehner, J., et al. (2025). "[Representation Engineering for Large-Language Models: Survey and Research Challenges](https://arxiv.org/abs/2502.17601)" *ArXiv*.
 
@@ -357,7 +371,7 @@ And sometimes, the failed experiment leads you somewhere more interesting than w
 ---
 
 **TL;DR:**
-1. Cosine similarity between separately-trained probe weights reflects classifier geometry, not concept structure—use AUROC and d-prime instead for this use case
+1. Cosine similarity between separately-trained probe weights reflects classifier geometry, not concept structure—use AUROC and d-prime instead for measuring concept relationships
 2. With proper metrics, empathy subtypes ARE distinctly represented (AUROC = 1.0)
 3. Empathy emerges at Layer 1 and is independent of surface features like formality
 4. This generalizes across 4 models from 1.1B to 7B parameters
@@ -403,7 +417,7 @@ Cosine similarity no distingue estructura real de ruido.
 
 En este punto, convocamos un research council—múltiples perspectivas para stress-testear los findings:
 
-**Principal Investigator**: "¿Es esto específico de empatía, o la metodología está rota?"
+**Principal Investigator**: "¿Es esto específico de empatía, o hay algo mal con nuestra métrica?"
 
 **Statistician**: "Necesitamos un control gold-standard. Algo trivialmente separable."
 
@@ -437,6 +451,23 @@ Pero la métrica de cosine dice que no son mejores que aleatorio.
 Acá está la geometría: la regresión logística binaria encuentra un hiperplano que separa dos clases. El vector de pesos apunta hacia la clase positiva.
 
 Cuando entrenás probes separados para diferentes conceptos, los pesos de cada probe apuntan hacia su respectiva clase positiva. Estas direcciones son naturalmente diferentes—ese es el punto. Los cosines resultantes reflejan **geometría del clasificador, no estructura de conceptos**.
+
+Este finding se alinea con trabajo reciente cuestionando cosine similarity en embedding spaces. [Steck et al. (2024)](https://arxiv.org/abs/2403.05440) mostraron que cosine similarity puede producir "similitudes arbitrarias y por lo tanto sin sentido" dependiendo de elecciones de regularización. [Park et al.](https://arxiv.org/abs/2311.03658) demostraron que el inner product Euclideano estándar puede no ser apropiado para espacios de representación.
+
+## Contexto Teórico: La Distinción Read/Write
+
+¿Por qué pasa esto arquitectónicamente? [El trabajo de Liv Gorton sobre non-linear feature representations](https://livgorton.com/non-linear-feature-reps) provee un framing útil:
+
+- Los Transformers **"escriben"** al residual stream aditivamente—los features se superponen
+- Pero **"leer"** (recuperar features) puede involucrar diferentes estrategias
+- Los linear probes "leen" exitosamente la estructura de empatía (AUROC = 1.0)—encuentran la información
+- Pero comparar sus vectores de pesos con cosine mide algo completamente diferente
+
+Los probes están resolviendo *diferentes problemas de clasificación*. El vector de pesos de cada probe apunta hacia su propia clase positiva. Estas direcciones son naturalmente diferentes—eso es lo que hace que la clasificación funcione. El cosine entre ellas refleja esta geometría del clasificador, no si los conceptos subyacentes comparten estructura neural.
+
+Por esto la métrica falla para este caso de uso: estamos midiendo propiedades de los clasificadores, no propiedades de lo que clasifican.
+
+**Alcance de este finding**: Este problema es específico de comparar pesos de probes binarios *entrenados separadamente*. Cosine similarity sigue siendo válido para otros usos en representation engineering—por ejemplo, medir alineamiento entre un steering vector y una dirección target extraída via el mismo método contrastivo.
 
 ---
 
@@ -652,6 +683,7 @@ Y a veces, el experimento fallido te lleva a algún lugar más interesante que d
 
 - Steck, H., et al. (2024). "[Is Cosine-Similarity of Embeddings Really About Similarity?](https://arxiv.org/abs/2403.05440)" *ArXiv*.
 - Park, K., et al. (2023). "[The Linear Representation Hypothesis and the Geometry of Large Language Models](https://arxiv.org/abs/2311.03658)" *ArXiv*.
+- Gorton, L. (2024). "[Non-linear feature representations in steering vectors](https://livgorton.com/non-linear-feature-reps)" *Blog*.
 - Zou, A., et al. (2023). "[Representation Engineering: A Top-Down Approach to AI Transparency](https://arxiv.org/abs/2310.01405)" *ArXiv*.
 - Wehner, J., et al. (2025). "[Representation Engineering for Large-Language Models: Survey and Research Challenges](https://arxiv.org/abs/2502.17601)" *ArXiv*.
 
@@ -664,7 +696,7 @@ Y a veces, el experimento fallido te lleva a algún lugar más interesante que d
 ---
 
 **TL;DR:**
-1. Cosine similarity entre pesos de probes entrenados separadamente refleja geometría del clasificador, no estructura de conceptos—usá AUROC y d-prime en su lugar para este caso de uso
+1. Cosine similarity entre pesos de probes entrenados separadamente refleja geometría del clasificador, no estructura de conceptos—usá AUROC y d-prime en su lugar para medir relaciones de conceptos
 2. Con métricas apropiadas, los subtipos de empatía SÍ están representados distintamente (AUROC = 1.0)
 3. La empatía emerge en Layer 1 y es independiente de features superficiales como formalidad
 4. Esto generaliza entre 4 modelos desde 1.1B hasta 7B parámetros
