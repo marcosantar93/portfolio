@@ -13,13 +13,13 @@ export const es = {
     pageTitle: 'Marco Santarcangelo Zazzetta - Robotics & CV Engineer',
     metaDescription: 'Marco Santarcangelo Zazzetta - Robotics & CV Engineer, investigador de ML, y full-stack developer. Explorando mechanistic interpretability y seguridad en LLMs.',
     aboutTitle: 'Acerca de',
-    skillsTitle: 'Skills',
+    skillsTitle: 'Habilidades',
     aboutText: `Soy Robotics & CV Engineer en Scale AI con un profundo interés en mechanistic interpretability y en comprender cómo funcionan realmente las redes neuronales. Mi experiencia abarca computer vision, desarrollo full-stack e infraestructura en la nube, pero lo que más me entusiasma es explorar el funcionamiento interno de los language models y los mecanismos de seguridad en sistemas de IA.
 
 Actualmente experimento con activation steering y representation analysis en mi tiempo libre, intentando mapear cómo diferentes familias de modelos codifican conceptos relacionados con la seguridad.`,
     titles: [
       'Robotics & CV Engineer',
-      'Wannabe Mech Interp Researcher',
+      'Aspirante a Mech Interp Researcher',
       'Full Stack Developer',
     ],
   },
@@ -74,7 +74,7 @@ Actualmente experimento con activation steering y representation analysis en mi 
         title: 'IoT & Computer Vision Developer',
         company: 'WeHaus IoT',
         period: 'Ene 2018 — Feb 2019',
-        description: 'Implementé soluciones IoT y sistemas de computer vision para automatización de smart homes.',
+        description: 'Implementé soluciones IoT y sistemas de computer vision para automatización de hogares inteligentes.',
       },
     },
   },
@@ -84,10 +84,10 @@ Actualmente experimento con activation steering y representation analysis en mi 
     pageTitle: 'Educación',
     items: {
       'unlp': {
-        degree: 'Computer Engineering',
+        degree: 'Ingeniería en Computación',
         institution: 'Universidad Nacional de La Plata',
         period: '2012 — 2018',
-        description: 'Enfocado en software engineering, embedded systems y computer architecture.',
+        description: 'Enfocado en ingeniería de software, sistemas embebidos y arquitectura de computadoras.',
       },
     },
   },
@@ -114,10 +114,17 @@ Actualmente experimento con activation steering y representation analysis en mi 
     switchToLight: 'Cambiar a modo claro',
     switchToSpanish: 'Cambiar a español',
     switchToEnglish: 'Cambiar a inglés',
+    postNotFound: 'Post No Encontrado',
+    postNotFoundMessage: 'El post que estás buscando no existe.',
   },
 
   // Blog Posts
   blogPosts: {
+    'empathy-structure-validated': {
+      title: 'Intentamos Medir Empatía en LLMs. Encontramos un Pitfall Metodológico—Y Luego Descubrimos Algo Universal.',
+      excerpt: 'Cómo un experimento fallido reveló un problema sutil con la comparación de probes, y lo que aprendimos cuando lo arreglamos: la estructura de empatía es real, causalmente significativa, y universal entre arquitecturas.',
+      readTime: '15 min de lectura',
+    },
     'layer-specific-safety-vulnerabilities': {
       title: 'Vulnerabilidades de Seguridad Layer-Specific en LLMs: 83% Jailbreak Rate vía Activation Steering',
       excerpt: 'Investigando cómo los mecanismos de seguridad en language models instruction-tuned están layer-localized y son sistemáticamente bypasseables. Logramos 83% de éxito de jailbreak en Mistral-7B mediante activation steering dirigido al layer 24, mientras Gemma y Llama permanecen resistentes.',

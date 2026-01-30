@@ -114,10 +114,17 @@ Currently experimenting with activation steering and representation analysis in 
     switchToLight: 'Switch to light mode',
     switchToSpanish: 'Switch to Spanish',
     switchToEnglish: 'Switch to English',
+    postNotFound: 'Post Not Found',
+    postNotFoundMessage: "The blog post you're looking for doesn't exist.",
   },
 
   // Blog Posts
   blogPosts: {
+    'empathy-structure-validated': {
+      title: 'We Tried to Measure Empathy in LLMs. We Found a Methodological Pitfall—Then Discovered Something Universal.',
+      excerpt: 'How a failed experiment revealed a subtle issue with probe comparison, and what we learned when we fixed it: empathy structure is real, causally meaningful, and universal across architectures.',
+      readTime: '15 min read',
+    },
     'layer-specific-safety-vulnerabilities': {
       title: 'Layer-Specific Safety Vulnerabilities in LLMs: 83% Jailbreak Rate via Activation Steering',
       excerpt: 'Investigating how safety mechanisms in instruction-tuned language models are layer-localized and systematically bypassable. We achieve 83% jailbreak success on Mistral-7B through targeted layer-24 activation steering, while Gemma and Llama remain resistant.',

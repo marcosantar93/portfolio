@@ -60,9 +60,9 @@ const BlogPost: React.FC = () => {
   if (!post) {
     return (
       <div className={styles.blogPost}>
-        <h1 className={styles.title}>Post Not Found</h1>
+        <h1 className={styles.title}>{t.common.postNotFound}</h1>
         <p className={styles.notFound}>
-          The blog post you're looking for doesn't exist.
+          {t.common.postNotFoundMessage}
         </p>
         <Link to="/blog" className={styles.backLink}>
           ← {t.common.backToBlog}
