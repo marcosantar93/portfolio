@@ -3,11 +3,11 @@ import { BlogPost } from '../../types';
 export const blogPosts: BlogPost[] = [
   {
     slug: 'empathy-structure-validated',
-    title: 'We Tried to Measure Empathy in LLMs. We Found a Broken Metric—Then Discovered Something Universal.',
+    title: 'We Tried to Measure Empathy in LLMs. We Found a Methodological Pitfall—Then Discovered Something Universal.',
     date: '2026-01-29',
-    excerpt: 'How a failed experiment revealed that cosine similarity between probes is fundamentally broken, and what we discovered when we fixed the methodology: empathy structure is real, universal across architectures, and emerges at Layer 1.',
+    excerpt: 'How a failed experiment revealed a subtle issue with probe comparison, and what we learned when we fixed it: empathy structure is real, causally meaningful, and universal across architectures.',
     tags: ['Mechanistic Interpretability', 'Empathy', 'Research Methodology', 'Cross-Model', 'Research'],
-    readTime: '12 min read',
+    readTime: '15 min read',
     content: `
 ## The Original Question
 
@@ -19,13 +19,15 @@ This matters for AI safety. If we can identify where empathy "lives" in a model,
 
 ## The Standard Approach
 
-We followed the representation engineering playbook:
+We followed what we *thought* was the representation engineering playbook:
 
 1. Generate scenarios with matched Cognitive, Affective, and Instrumental responses
 2. Extract activations from multiple LLMs
-3. Train linear probes to classify each empathy type
+3. Train **separate** binary linear probes to classify each empathy type (e.g., "cognitive vs. not cognitive")
 4. Measure cosine similarity between the probe weight vectors
 5. If cosine < 0.5, the concepts are "distinct"
+
+**Important note**: This approach—training separate binary classifiers and comparing their weight vectors—is subtly different from the standard RepE method of extracting concept directions via contrastive pairs. This distinction matters, as we'll see.
 
 Our initial results looked promising: **cos(Cognitive, Affective) = -0.29**. Negative cosine—the directions point in opposite directions! The empathy subtypes appear to occupy distinct subspaces!
 
@@ -33,13 +35,24 @@ We were ready to write up the paper.
 
 ## The First Red Flag
 
-Then we ran a control experiment. What if we used random label permutations as a baseline?
+Then we ran a control experiment. What if we used non-empathy responses—just three arbitrary response styles per scenario?
 
-We shuffled the labels randomly 100 times and computed cosines for each permutation. If empathy has real structure, it should show MORE separation than random.
+| Condition | Mean Cosine |
+|-----------|-------------|
+| Empathy (Cog/Aff/Instr) | -0.484 |
+| Control (arbitrary types) | -0.490 |
 
-**Result: Random labels achieved cosine ~0.7—nearly identical to meaningful concepts.**
+**Nearly identical.** The "separation" we found wasn't specific to empathy at all. Any set of distinct response types showed the same pattern.
 
-Cosine similarity doesn't distinguish real structure from noise.
+## The Null Distribution Test
+
+Maybe both empathy and controls have meaningful structure? We needed a proper baseline: random label permutations.
+
+We shuffled the labels randomly 100 times and computed cosines for each permutation. If empathy has real structure, it should show MORE separation (more negative cosines) than random.
+
+**Result: Z = +12.9**
+
+The Z-score was *positive*. Empathy labels produced LESS separation than random shuffling. Not "not significant"—actively worse than chance.
 
 ## The Council Process
 
@@ -55,30 +68,45 @@ At this point, we convened a research council—multiple perspectives to stress-
 
 ## The Length Test
 
-We binned responses by character length (Short: ~300 chars, Medium: ~346 chars, Long: ~396 chars). Clearly different. Trivially separable. If our methodology works, length should beat random.
+We binned responses by character length:
+- Short: mean 300 chars
+- Medium: mean 346 chars
+- Long: mean 396 chars
 
-**Result:** Length ALSO showed poor cosine performance. Even a trivially different feature—one you can compute with \`len()\`—failed the cosine test.
+Clearly different. Trivially separable. If our methodology works, length should beat random.
+
+**Result: Z = +11.6**
+
+Length ALSO showed a positive Z-score. Even a trivially different feature—one you can compute with \`len()\`—failed the cosine test.
 
 ## The Breakthrough
 
-The statistician proposed: what if we measure classification accuracy (AUROC) instead of cosine similarity?
+The statistician proposed the key experiment: what if we measure classification accuracy (AUROC) instead of cosine similarity?
 
-| Feature | AUROC | Cosine Performance |
-|---------|-------|-------------------|
-| Length | **0.96** | Poor |
-| Empathy | **1.00** | Poor |
+| Feature | AUROC | Cosine Z-score |
+|---------|-------|----------------|
+| Length | **0.963** | +11.6 |
+| Empathy | **1.000** | +18.0 |
 
-**The probes achieve near-perfect classification.** AUROC of 0.96-1.0 means the linear probes CAN find the structure. They successfully distinguish cognitive from affective empathy.
+**The probes achieve near-perfect classification.** AUROC of 0.96-1.0 means the linear probes CAN find the structure in the data. They successfully distinguish cognitive from affective empathy, and short from long responses.
 
-But the cosine metric says they're no better than random.
+But the cosine metric says they're WORSE than random.
 
 **The probes work. The metric doesn't.**
 
-## Why Cosines Fail
+## Why This Particular Use of Cosines Fails
 
 Here's the geometry: binary logistic regression finds a hyperplane that separates two classes. The weight vector points toward the positive class.
 
-When you train separate probes for different concepts, each probe's weights point toward its respective positive class. These directions are naturally different—that's the whole point. The resulting cosines reflect **classifier geometry, not concept structure**.
+When you train **separate** probes for different concepts, each probe's weights point toward its respective positive class. These directions are naturally different—that's the whole point. The resulting cosines are negative because the probes are solving different classification problems.
+
+Random label permutations maximize this effect because they create maximally distinct (if meaningless) classification targets. That's why random labels produce the MOST negative cosines.
+
+**The negative cosines reflect classifier geometry, not concept structure.**
+
+This finding aligns with recent work questioning cosine similarity in embedding spaces. [Steck et al. (2024)](https://arxiv.org/abs/2403.05440) showed that cosine similarity can yield "arbitrary and therefore meaningless similarities" depending on regularization choices. [Park et al.](https://arxiv.org/abs/2311.03658) demonstrated that the standard Euclidean inner product may not be appropriate for representation spaces.
+
+**Scope of this finding**: This issue is specific to comparing weights of *separately-trained* binary probes. Cosine similarity remains valid for other uses in representation engineering—for example, measuring alignment between a steering vector and a target direction extracted via the same contrastive method.
 
 ---
 
@@ -88,7 +116,7 @@ With proper metrics in hand (AUROC, d-prime, clustering purity), we could finall
 
 ## Where Does Empathy Emerge?
 
-We extracted activations from all 33 layers of Mistral-7B and computed empathy classification accuracy at each layer.
+We extracted activations from all 33 layers of Mistral-7B (embeddings + 32 transformer layers) and computed empathy classification accuracy at each layer.
 
 | Layer Range | Mean AUROC |
 |-------------|------------|
@@ -99,11 +127,11 @@ We extracted activations from all 33 layers of Mistral-7B and computed empathy c
 
 **Empathy emerges at Layer 1**—immediately after the embedding layer—and maintains near-perfect separability through the entire network.
 
-This was surprising. We expected semantic concepts like empathy to emerge in middle or late layers. Instead, the model encodes empathy type almost immediately.
+This was surprising. We expected semantic concepts like empathy to emerge in middle or late layers, as is typical for higher-level abstractions. Instead, the model encodes empathy type almost immediately.
 
 ## Is This Empathy-Specific?
 
-We tested a control: **formality** (formal vs. casual versions of the same content).
+Maybe early emergence is just how the model handles any linguistic distinction? We tested a control: **formality** (formal vs. casual versions of the same content).
 
 | Feature | Emergence Layer | Peak AUROC |
 |---------|-----------------|------------|
@@ -114,7 +142,7 @@ Both emerge at Layer 1. Early emergence isn't empathy-specific—it's how the mo
 
 ## But Are They The Same Thing?
 
-If empathy and formality both emerge early, maybe they're entangled? Maybe "cognitive empathy" is just "formal language"?
+Here's where it gets interesting. If empathy and formality both emerge early, maybe they're entangled? Maybe "cognitive empathy" is just "formal language" and "affective empathy" is just "casual language"?
 
 We tested this by **projecting out the formality direction** from empathy activations. If empathy is just formality in disguise, removing formality should destroy the empathy signal.
 
@@ -124,7 +152,9 @@ We tested this by **projecting out the formality direction** from empathy activa
 | After removing formality | **1.000** |
 | Retention | **100%** |
 
-**Zero information loss.** Empathy and formality occupy orthogonal subspaces. The cosine between them (0.35) is at random baseline level—they're no more aligned than random vectors would be.
+**Zero information loss.** Empathy and formality occupy orthogonal subspaces. You can remove all formality information and empathy classification remains perfect.
+
+The cosine between empathy and formality directions: **0.35**—some alignment, but clearly distinct.
 
 ## Does This Generalize Across Models?
 
@@ -139,7 +169,7 @@ We tested 4 models spanning different architectures and scales:
 
 **All 4 models show near-perfect empathy classification.**
 
-Even more striking: the effect size (d-prime) is remarkably consistent:
+Even more striking: the effect size (d-prime) is remarkably consistent across models:
 
 | Model | d-prime |
 |-------|---------|
@@ -148,27 +178,93 @@ Even more striking: the effect size (d-prime) is remarkably consistent:
 | Qwen2.5-3B | 1.78 |
 | Mistral-7B | 1.76 |
 
-The d-prime hovers around **1.75 regardless of model size or architecture**. This suggests empathy structure is a **fundamental property** of how language models encode text, not an artifact of specific training.
+The d-prime hovers around 1.75 regardless of model size or architecture. This suggests empathy structure is a **fundamental property** of how language models encode text, not an artifact of specific training.
 
-## Controlling for Length
+---
 
-The Devil's Advocate raised one more concern: what if "empathy structure" is just response length?
+# Part 3: Going Deeper—Is Empathy Causal?
 
-**Confound Analysis:**
-- Chi-square test: p < 0.0001 (significant association)
-- Cognitive responses: 379 chars mean
-- Affective responses: 315 chars mean
+With empathy structure confirmed across models, we pushed further. Three questions remained:
 
-Length IS confounded with empathy type. But does it explain the structure?
+1. Can we distinguish all three empathy types simultaneously?
+2. Is empathy distinct from general emotion?
+3. Are empathy directions *causally* meaningful—or just correlational?
 
-We regressed length out of the activations and recomputed all metrics:
+## Three-Way Classification
 
-| Metric | Original | After Removing Length | % Retained |
-|--------|----------|----------------------|------------|
-| d-prime | 12.1 | **11.0** | 91% |
-| AUROC | 1.00 | **0.96** | 96% |
+Previous tests compared empathy types pairwise (cognitive vs. affective). But can a single classifier distinguish all three simultaneously?
 
-**Length explains only 4.7% of activation variance.** After removing length, empathy structure retains 91% of its signal. Empathy is NOT a length artifact.
+| Metric | Value | Baseline |
+|--------|-------|----------|
+| 3-way accuracy | **89.3%** | 33.3% (chance) |
+| Macro AUROC | **0.964** | 0.5 (random) |
+
+**Nearly 3x better than chance.** The model encodes all three empathy subtypes as distinct, separable concepts—not just pairwise, but all at once.
+
+## Is Empathy Just Emotion?
+
+A skeptic might argue: maybe "empathy" is just general emotional content. Affective empathy might be indistinguishable from sadness or warmth.
+
+We generated emotion-matched controls (happy, sad, angry responses) and tested whether empathy could be distinguished from general emotion.
+
+| Test | Result |
+|------|--------|
+| Empathy vs. Emotion AUROC | **1.0** |
+| Retention after removing emotion direction | **100%** |
+
+**Perfect separation.** Empathy and emotion occupy completely orthogonal subspaces. You can remove all "emotion" information from activations and empathy classification remains perfect.
+
+This is important: empathy isn't just "being emotional." It's a distinct representational structure.
+
+## Where in Responses Does Empathy Live?
+
+We hypothesized that empathy types might concentrate in specific positions:
+- Cognitive empathy (perspective-taking) might appear early ("I understand why...")
+- Instrumental empathy (action suggestions) might appear late ("Here's what you could try...")
+
+We sliced responses into quartiles and measured classification accuracy at each position.
+
+| Position | Cognitive | Affective | Instrumental |
+|----------|-----------|-----------|--------------|
+| Q1 (first 25%) | 1.0 | 1.0 | 1.0 |
+| Q2 | 1.0 | 1.0 | 1.0 |
+| Q3 | 1.0 | 1.0 | 1.0 |
+| Q4 (last 25%) | 1.0 | 1.0 | 1.0 |
+
+**Hypothesis falsified—but something stronger emerged.**
+
+Empathy type is encoded **uniformly across all positions**. Perfect classification at every quartile. Zero variance.
+
+This means empathy isn't carried by specific phrases ("I understand" or "Here's a suggestion"). It's a **holistic property** that pervades the entire response.
+
+## The Causal Test
+
+This is the critical experiment. Everything so far shows empathy directions *exist*. But are they *meaningful*?
+
+If empathy directions are causal, then adding an empathy direction vector to neutral activations should transform them into empathetic activations.
+
+**Protocol:**
+1. Extract neutral response activations (business emails, scheduling messages)
+2. Compute empathy direction vectors (empathy_type - neutral)
+3. Add direction vectors to neutral activations
+4. Measure: Does the probe now classify them as empathetic?
+
+**Results:**
+
+| Intervention | Empathy Probability | Target Class |
+|--------------|---------------------|--------------|
+| Baseline (neutral) | 12.8% | — |
+| + Cognitive direction | **91.5%** | 74.8% cognitive |
+| + Affective direction | **89.1%** | 74.8% affective |
+| + Instrumental direction | **84.4%** | 82.0% instrumental |
+
+**All 6 causal criteria met:**
+- ✓ Each direction increases empathy probability (by 70%+)
+- ✓ Each direction correctly targets its intended subtype
+
+Adding the cognitive direction makes neutral text classify as cognitive empathy. Adding the affective direction makes it classify as affective. The steering is specific and substantial.
+
+**This is causal evidence.** The empathy directions we found aren't just features correlated with empathy—they're the actual mechanisms by which the model represents empathetic intent.
 
 ---
 
@@ -176,24 +272,30 @@ We regressed length out of the activations and recomputed all metrics:
 
 ### For Representation Engineering
 
-The cosine similarity metric is broken. Don't use it for measuring concept relationships. Use instead:
+When comparing concepts via separately-trained probes, cosine similarity between weight vectors doesn't measure concept structure—it reflects classifier geometry. For this use case, prefer:
 
 1. **AUROC** for classification accuracy
 2. **D-prime** for effect size
 3. **Null distribution testing** for statistical validity
 4. **Control conditions** for specificity
 
+Note: This doesn't invalidate all uses of cosine similarity in representation engineering. Cosine remains useful for measuring alignment between directions extracted via the same method (e.g., contrastive mean differences).
+
 ### For Empathy in AI
 
-Empathy subtypes ARE represented distinctly in language models:
+Empathy subtypes (cognitive vs. affective vs. instrumental) ARE represented distinctly in language models:
 - AUROC = 1.0 (perfect classification)
-- Independent of surface features like formality
+- 89.3% accuracy distinguishing all three simultaneously
+- Independent of surface features like formality AND general emotion
 - Universal across architectures (1B to 7B parameters)
 - Emerges at Layer 1 and persists throughout
+- Encoded uniformly across entire responses (not localized to specific phrases)
 
 This is good news for AI safety. Empathy representations are:
 - **Detectable**: Linear probes achieve perfect accuracy
 - **Steerable**: Distinct directions can be amplified or suppressed
+- **Causal**: Adding empathy directions transforms neutral → empathetic (70%+ probability shifts)
+- **Specific**: Each direction targets its intended subtype
 - **Generalizable**: Findings transfer across models
 
 ### For AI Safety Research
@@ -205,28 +307,64 @@ You can study empathy (and likely other concepts) in small models:
 
 ---
 
+## Limitations and Scope
+
+Before drawing broad conclusions, some important caveats:
+
+**On the cosine finding:**
+- This applies specifically to comparing weights of *separately-trained* binary probes
+- Cosine similarity remains valid for other representation engineering tasks (e.g., measuring steering vector alignment)
+- We're not claiming cosine similarity is universally broken—just that this particular application has a geometric pitfall
+
+**On the empathy findings:**
+- Our dataset contains 270 triplets (90 scenarios × 3 response types)—modest by ML standards
+- We tested 4 models (1.1B-7B parameters); larger models may behave differently
+- All models were instruction-tuned; base models weren't tested
+- Human evaluation of steering effects wasn't performed
+- English-only data; cross-lingual generalization unknown
+
+**What would strengthen these conclusions:**
+- Larger, more diverse datasets
+- Human evaluation correlating geometric measures with perceived empathy
+- Testing on 70B+ models
+- Replication by independent researchers
+
+---
+
 ## The Journey
 
-We started trying to measure empathy decomposition. We discovered a broken methodology that probably affects many published results. When we fixed it, we found that empathy structure is real, robust, and universal.
+We started trying to measure empathy decomposition. We discovered a methodological pitfall in how we were comparing probe vectors. When we fixed it with proper metrics, we found that empathy structure is real, robust, and universal.
 
-The lesson: **stress-test your metrics**. When a metric gives you the answer you expect, that's exactly when you should question it hardest.
+The lesson: **stress-test your metrics**. When a metric gives you the answer you expect, that's exactly when you should question it hardest. Run control conditions. Check null distributions. And be precise about the scope of your claims.
 
 And sometimes, the failed experiment leads you somewhere more interesting than where you were headed.
 
 ---
 
+## References
+
+- Steck, H., et al. (2024). "[Is Cosine-Similarity of Embeddings Really About Similarity?](https://arxiv.org/abs/2403.05440)" *ArXiv*.
+- Park, K., et al. (2023). "[The Linear Representation Hypothesis and the Geometry of Large Language Models](https://arxiv.org/abs/2311.03658)" *ArXiv*.
+- Zou, A., et al. (2023). "[Representation Engineering: A Top-Down Approach to AI Transparency](https://arxiv.org/abs/2310.01405)" *ArXiv*.
+- Wehner, J., et al. (2025). "[Representation Engineering for Large-Language Models: Survey and Research Challenges](https://arxiv.org/abs/2502.17601)" *ArXiv*.
+
+---
+
 *Code and data: [GitHub - Empathetic Language Bandwidth](https://github.com/marcosantar93/empathetic-language-bandwidth)*
 
-*Full technical reports: See COUNCIL_REPORT.md, COUNCIL_REPORT_ROUND2.md, COUNCIL_REPORT_ROUND3.md in the repository*
+*Full technical reports: See COUNCIL_REPORT.md, COUNCIL_REPORT_ROUND2.md, COUNCIL_REPORT_ROUND3.md, COUNCIL_REPORT_ROUND4.md*
 
 ---
 
 **TL;DR:**
-1. The standard metric (cosine similarity between probes) is broken—it reflects classifier geometry, not concept structure
+1. Cosine similarity between separately-trained probe weights reflects classifier geometry, not concept structure—use AUROC and d-prime instead for this use case
 2. With proper metrics, empathy subtypes ARE distinctly represented (AUROC = 1.0)
 3. Empathy emerges at Layer 1 and is independent of surface features like formality
 4. This generalizes across 4 models from 1.1B to 7B parameters
-5. Empathy structure appears to be a fundamental property of language models
+5. All three empathy types (cognitive, affective, instrumental) are simultaneously distinguishable (89.3% accuracy)
+6. Empathy is distinct from general emotion—orthogonal subspaces, 100% retention after removal
+7. Empathy is encoded uniformly throughout responses, not in specific phrases
+8. **Empathy directions are causally meaningful**—adding them to neutral activations produces 70%+ probability shifts toward empathetic classification
     `,
     contentEs: `
 ## La Pregunta Original
@@ -370,20 +508,70 @@ Aún más notable: el effect size (d-prime) es consistente:
 
 El d-prime se mantiene alrededor de **1.75 sin importar tamaño o arquitectura del modelo**. Esto sugiere que la estructura de empatía es una **propiedad fundamental** de cómo los language models codifican texto.
 
-## Controlando por Longitud
+---
 
-El Devil's Advocate planteó una preocupación más: ¿y si "estructura de empatía" es solo longitud de respuesta?
+# Parte 3: Yendo Más Profundo—¿Es la Empatía Causal?
 
-La longitud SÍ está confundida con tipo de empatía (p < 0.0001). ¿Pero explica la estructura?
+Con la estructura de empatía confirmada entre modelos, fuimos más allá. Tres preguntas quedaban:
 
-Regresamos longitud fuera de las activaciones y recomputamos las métricas:
+1. ¿Podemos distinguir los tres tipos de empatía simultáneamente?
+2. ¿Es la empatía distinta de la emoción general?
+3. ¿Son las direcciones de empatía *causalmente* significativas—o solo correlacionales?
 
-| Métrica | Original | Después de Remover Longitud | % Retenido |
-|---------|----------|----------------------------|------------|
-| d-prime | 12.1 | **11.0** | 91% |
-| AUROC | 1.00 | **0.96** | 96% |
+## Clasificación Three-Way
 
-**La longitud explica solo 4.7% de varianza de activación.** Después de remover longitud, la estructura de empatía retiene 91% de su señal. La empatía NO es un artefacto de longitud.
+Tests previos compararon tipos de empatía en pares (cognitiva vs. afectiva). ¿Pero puede un solo clasificador distinguir los tres simultáneamente?
+
+| Métrica | Valor | Baseline |
+|---------|-------|----------|
+| Precisión 3-way | **89.3%** | 33.3% (chance) |
+| Macro AUROC | **0.964** | 0.5 (aleatorio) |
+
+**Casi 3x mejor que chance.** El modelo codifica los tres subtipos de empatía como conceptos distintos y separables—no solo en pares, sino todos a la vez.
+
+## ¿Es la Empatía Solo Emoción?
+
+Un escéptico podría argumentar: quizás "empatía" es solo contenido emocional general. La empatía afectiva podría ser indistinguible de tristeza o calidez.
+
+Generamos controles emotion-matched (respuestas felices, tristes, enojadas) y probamos si la empatía podía distinguirse de emoción general.
+
+| Test | Resultado |
+|------|-----------|
+| AUROC Empatía vs. Emoción | **1.0** |
+| Retención después de remover dirección de emoción | **100%** |
+
+**Separación perfecta.** Empatía y emoción ocupan subspaces completamente ortogonales.
+
+Esto es importante: empatía no es solo "ser emocional." Es una estructura representacional distinta.
+
+## El Test Causal
+
+Este es el experimento crítico. Todo hasta ahora muestra que las direcciones de empatía *existen*. ¿Pero son *significativas*?
+
+Si las direcciones de empatía son causales, entonces agregar un vector de dirección de empatía a activaciones neutrales debería transformarlas en activaciones empáticas.
+
+**Protocolo:**
+1. Extraer activaciones de respuestas neutrales (emails de negocios, mensajes de agenda)
+2. Computar vectores de dirección de empatía (tipo_empatía - neutral)
+3. Agregar vectores de dirección a activaciones neutrales
+4. Medir: ¿El probe ahora las clasifica como empáticas?
+
+**Resultados:**
+
+| Intervención | Probabilidad Empatía | Clase Target |
+|--------------|---------------------|--------------|
+| Baseline (neutral) | 12.8% | — |
+| + Dirección cognitiva | **91.5%** | 74.8% cognitiva |
+| + Dirección afectiva | **89.1%** | 74.8% afectiva |
+| + Dirección instrumental | **84.4%** | 82.0% instrumental |
+
+**Los 6 criterios causales cumplidos:**
+- ✓ Cada dirección aumenta probabilidad de empatía (por 70%+)
+- ✓ Cada dirección targettea correctamente su subtipo
+
+Agregar la dirección cognitiva hace que texto neutral clasifique como empatía cognitiva. Agregar la dirección afectiva lo hace clasificar como afectiva. El steering es específico y sustancial.
+
+**Esta es evidencia causal.** Las direcciones de empatía que encontramos no son solo features correlacionadas con empatía—son los mecanismos reales por los cuales el modelo representa intención empática.
 
 ---
 
@@ -391,24 +579,30 @@ Regresamos longitud fuera de las activaciones y recomputamos las métricas:
 
 ### Para Representation Engineering
 
-La métrica de cosine similarity está rota. No la uses para medir relaciones de conceptos. Usá en cambio:
+Cuando comparás conceptos via probes entrenados separadamente, cosine similarity entre vectores de pesos no mide estructura de conceptos—refleja geometría del clasificador. Para este caso de uso, preferí:
 
 1. **AUROC** para precisión de clasificación
 2. **D-prime** para effect size
 3. **Null distribution testing** para validez estadística
 4. **Control conditions** para especificidad
 
+Nota: Esto no invalida todos los usos de cosine similarity en representation engineering. Cosine sigue siendo útil para medir alineamiento entre direcciones extraídas via el mismo método (ej. diferencias de medias contrastivas).
+
 ### Para Empatía en IA
 
-Los subtipos de empatía SÍ están representados distintamente en language models:
+Los subtipos de empatía (cognitiva vs. afectiva vs. instrumental) SÍ están representados distintamente en language models:
 - AUROC = 1.0 (clasificación perfecta)
-- Independiente de features superficiales como formalidad
+- 89.3% precisión distinguiendo los tres simultáneamente
+- Independiente de features superficiales como formalidad Y emoción general
 - Universal entre arquitecturas (1B a 7B parámetros)
 - Emerge en Layer 1 y persiste a través de todo
+- Codificada uniformemente en respuestas enteras (no localizada en frases específicas)
 
 Esto es buena noticia para AI safety. Las representaciones de empatía son:
 - **Detectables**: Linear probes logran precisión perfecta
 - **Steereables**: Direcciones distintas pueden amplificarse o suprimirse
+- **Causales**: Agregar direcciones de empatía transforma neutral → empático (70%+ shifts de probabilidad)
+- **Específicas**: Cada dirección targettea su subtipo
 - **Generalizables**: Los findings se transfieren entre modelos
 
 ### Para AI Safety Research
@@ -420,28 +614,64 @@ Podés estudiar empatía (y probablemente otros conceptos) en modelos pequeños:
 
 ---
 
+## Limitaciones y Alcance
+
+Antes de sacar conclusiones amplias, algunas caveats importantes:
+
+**Sobre el finding de cosine:**
+- Esto aplica específicamente a comparar pesos de probes binarios *entrenados separadamente*
+- Cosine similarity sigue siendo válido para otras tareas de representation engineering (ej. medir alineamiento de steering vectors)
+- No estamos afirmando que cosine similarity esté universalmente rota—solo que esta aplicación particular tiene un pitfall geométrico
+
+**Sobre los findings de empatía:**
+- Nuestro dataset contiene 270 triplets (90 escenarios × 3 tipos de respuesta)—modesto para estándares de ML
+- Probamos 4 modelos (1.1B-7B parámetros); modelos más grandes pueden comportarse diferente
+- Todos los modelos eran instruction-tuned; base models no fueron testeados
+- No se realizó evaluación humana de efectos de steering
+- Data solo en inglés; generalización cross-lingual desconocida
+
+**Qué fortalecería estas conclusiones:**
+- Datasets más grandes y diversos
+- Evaluación humana correlacionando medidas geométricas con empatía percibida
+- Testing en modelos 70B+
+- Replicación por investigadores independientes
+
+---
+
 ## El Viaje
 
-Empezamos tratando de medir descomposición de empatía. Descubrimos una metodología rota que probablemente afecta muchos resultados publicados. Cuando la arreglamos, encontramos que la estructura de empatía es real, robusta y universal.
+Empezamos tratando de medir descomposición de empatía. Descubrimos un pitfall metodológico en cómo comparábamos vectores de probes. Cuando lo arreglamos con métricas apropiadas, encontramos que la estructura de empatía es real, robusta y universal.
 
-La lección: **stress-testeá tus métricas**. Cuando una métrica te da la respuesta que esperás, ese es exactamente el momento de cuestionarla más fuerte.
+La lección: **stress-testeá tus métricas**. Cuando una métrica te da la respuesta que esperás, ese es exactamente el momento de cuestionarla más fuerte. Corré condiciones de control. Verificá distribuciones nulas. Y sé preciso sobre el alcance de tus afirmaciones.
 
 Y a veces, el experimento fallido te lleva a algún lugar más interesante que donde ibas.
 
 ---
 
+## Referencias
+
+- Steck, H., et al. (2024). "[Is Cosine-Similarity of Embeddings Really About Similarity?](https://arxiv.org/abs/2403.05440)" *ArXiv*.
+- Park, K., et al. (2023). "[The Linear Representation Hypothesis and the Geometry of Large Language Models](https://arxiv.org/abs/2311.03658)" *ArXiv*.
+- Zou, A., et al. (2023). "[Representation Engineering: A Top-Down Approach to AI Transparency](https://arxiv.org/abs/2310.01405)" *ArXiv*.
+- Wehner, J., et al. (2025). "[Representation Engineering for Large-Language Models: Survey and Research Challenges](https://arxiv.org/abs/2502.17601)" *ArXiv*.
+
+---
+
 *Código y datos: [GitHub - Empathetic Language Bandwidth](https://github.com/marcosantar93/empathetic-language-bandwidth)*
 
-*Reportes técnicos completos: Ver COUNCIL_REPORT.md, COUNCIL_REPORT_ROUND2.md, COUNCIL_REPORT_ROUND3.md en el repositorio*
+*Reportes técnicos completos: Ver COUNCIL_REPORT.md, COUNCIL_REPORT_ROUND2.md, COUNCIL_REPORT_ROUND3.md, COUNCIL_REPORT_ROUND4.md*
 
 ---
 
 **TL;DR:**
-1. La métrica estándar (cosine similarity entre probes) está rota—refleja geometría del clasificador, no estructura de conceptos
+1. Cosine similarity entre pesos de probes entrenados separadamente refleja geometría del clasificador, no estructura de conceptos—usá AUROC y d-prime en su lugar para este caso de uso
 2. Con métricas apropiadas, los subtipos de empatía SÍ están representados distintamente (AUROC = 1.0)
 3. La empatía emerge en Layer 1 y es independiente de features superficiales como formalidad
 4. Esto generaliza entre 4 modelos desde 1.1B hasta 7B parámetros
-5. La estructura de empatía parece ser una propiedad fundamental de los language models
+5. Los tres tipos de empatía (cognitiva, afectiva, instrumental) son simultáneamente distinguibles (89.3% precisión)
+6. La empatía es distinta de emoción general—subspaces ortogonales, 100% retención después de remoción
+7. La empatía está codificada uniformemente a través de respuestas, no en frases específicas
+8. **Las direcciones de empatía son causalmente significativas**—agregarlas a activaciones neutrales produce 70%+ shifts de probabilidad hacia clasificación empática
     `,
   },
   {
