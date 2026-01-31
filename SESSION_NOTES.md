@@ -1,245 +1,134 @@
-# Session Notes - Favicon Fix (2026-01-20)
+# Session Notes - January 30, 2026
 
-## Issue
-Favicon was not displaying correctly on marcosantar.com despite multiple browser cache clearing attempts (tested in Chrome incognito and fresh Safari session).
+## Overview
 
-## Root Cause
-1. **Old favicon.ico file**: The `favicon.ico` was still the old React default icon from 2023
-2. **CloudFront caching**: Even with browser cache clearing, CloudFront edge servers were serving cached versions
-3. **Missing multi-format icons**: Lacked properly generated PNG favicons in multiple sizes
-
-## Solution Implemented
-
-### 1. Added Properly Generated Favicon Files
-Copied professionally generated favicon files from `/Users/marcosantarcangelozazzetta/Downloads/favicon_io/`:
-- `favicon.ico` - Multi-size ICO file for maximum compatibility
-- `favicon-16x16.png` - Small favicon
-- `favicon-32x32.png` - Standard favicon
-- `apple-touch-icon.png` - iOS/Apple devices (180x180)
-- `android-chrome-192x192.png` → `logo192.png` - Android/PWA
-- `android-chrome-512x512.png` → `logo512.png` - Android/PWA
-
-### 2. Updated Configuration Files
-
-**public/index.html**
-```html
-<link rel="icon" type="image/png" sizes="32x32" href="%PUBLIC_URL%/favicon-32x32.png?v=3" />
-<link rel="icon" type="image/png" sizes="16x16" href="%PUBLIC_URL%/favicon-16x16.png?v=3" />
-<link rel="icon" href="%PUBLIC_URL%/favicon.ico?v=3" />
-<link rel="apple-touch-icon" sizes="180x180" href="%PUBLIC_URL%/apple-touch-icon.png?v=3" />
-```
-
-**public/manifest.json**
-- Updated to include all new icon sizes
-- Added apple-touch-icon entry
-
-### 3. Cache-Busting Strategy
-- Added `?v=3` query parameters to all favicon URLs
-- Forces browsers to treat them as new resources
-
-### 4. Deployment
-```bash
-npm run build
-aws s3 sync build/ s3://marcosantar.com/ --delete
-aws cloudfront create-invalidation --distribution-id EONAIEAJ6WT2O --paths "/*"
-```
-
-**CloudFront Invalidation ID**: `I40V44MVOGSEQG8EOSIHF7HPWF`
-
-### 5. Git Commit
-- **Commit hash**: `ad360ee`
-- **Message**: "Update favicon with properly generated multi-format icons"
-- **Files changed**: 8 files (3 added, 5 modified)
-
-## Infrastructure Details
-- **Domain**: marcosantar.com (AWS Route53)
-- **CDN**: AWS CloudFront (Distribution ID: EONAIEAJ6WT2O)
-- **Storage**: S3 bucket `marcosantar.com`
-- **SSL/TLS**: AWS ACM Certificate (TLS 1.2+)
-
-## Testing
-After CloudFront invalidation completes (2-3 minutes):
-1. Visit https://marcosantar.com in fresh incognito window
-2. Custom brain/neural network icon should appear in browser tab
-3. Works across all browsers and devices
-
-## Key Learnings
-- CloudFront caching can persist even with browser cache clearing
-- Multi-format favicon files ensure compatibility across all platforms
-- Cache-busting query parameters (`?v=X`) are essential for favicon updates
-- Proper favicon.ico generation from SVG ensures fallback support
-
-## Resources Referenced
-- [Deploy React app to S3 & Cloudfront - DEV Community](https://dev.to/karanpratapsingh/deploy-react-app-to-s3-cloudfront-1cao)
-- [Favicon not updating after build in Create React App](https://github.com/facebook/create-react-app/discussions/17056)
-- [The Public Folder (and favicons!!) in create-react-app](https://medium.com/@jenniferdobak/the-public-folder-and-favicons-in-create-react-app-8dc2cc1d492b)
-- [How to Change the Favicon & Title of Your React App](https://medium.com/@leahcardoz/how-to-change-the-favicon-title-of-your-react-app-in-5-minutes-9163e023b8d2)
-
-## Next Session
-- Verify favicon is displaying correctly across all browsers
-- If needed, increment cache-busting version to `?v=4`
-- Consider removing old `favicon.svg` if no longer needed
+This session focused on finalizing the empathy research blog post for social media publishing and fixing various UI/translation issues.
 
 ---
 
-# Session Notes - Spanish Translation Review (2026-01-21)
-
-## Session Summary
-Reviewed and improved the Spanish translation of the blog post "Empathetic Language Bandwidth" by replacing unnatural Spanish technical terms with English equivalents, following standard practice in Spanish technical writing.
-
-## Context
-The user (Marco Santarcangelo Zazzetta) is from Argentina and requested the site use Argentine Spanish dialect (voseo: "vos" instead of "tú"). After initial translation, the user noticed that some forced Spanish technical translations sounded unnatural, particularly "tasa de éxito" (success rate), and requested a comprehensive review of the translation.
-
-User's exact feedback: *"'tasa de éxito' es muy raro en español, success rate tal vez sea mejor. revisa la traduccion con el council"*
-
 ## Work Completed
 
-### Technical Terms Replaced (Spanish → English)
-All changes made in `src/content/blog/index.ts`:
+### 1. Blog Post Refinements for Social Media Publishing
 
-1. **"tasa de éxito"** → **"success rate"** (2 occurrences)
-   - Line 194: Context about transfer success rate
-   - Line 252: Context about transfer success rate
+**File:** `src/content/blog/index.ts`
 
-2. **"separabilidad lineal"** → **"linear separability"**
-   - Line 211: AUROC to measure linear separability
+Made the empathy research blog post more methodologically rigorous:
 
-3. **"umbral"** → **"threshold"** (multiple occurrences)
-   - Line 212: threshold de 90% variance
-   - Line 271: Coherence threshold heading
+- **Softened "broken" language**: Changed "Is the methodology broken?" to "Is there something wrong with our metric?" (both EN and ES)
+- **Added "Theoretical Context: The Read/Write Distinction" section**: Cites Liv Gorton's work on non-linear feature representations to explain why cosine similarity fails for separately-trained probes
+- **Added Liv Gorton reference** to the References section
+- **Updated TL;DR #1**: Now ends with "for measuring concept relationships" instead of "for this use case"
 
-4. **"promedió"** / **"averaged"** → kept as **"averaged"** (2 occurrences)
-   - Line 198: Models with ≥11 dimensions averaged 8.8
-   - Line 198: Those with <11 averaged 6.4
+### 2. Mobile Navigation Fix
 
-5. **"rendimientos decrecientes"** → **"diminishing returns"**
-   - Line 290: Context about scaling to larger models
+**File:** `src/components/common/Navigation/Navigation.module.css`
 
-6. **"intercambian"** → **"trade off"**
-   - Line 232: Models don't trade off breadth for depth
+Fixed overlapping navigation elements on mobile:
 
-7. **"Amplitud y profundidad"** → **"Breadth y depth"** (2 occurrences)
-   - Line 198: Section heading
-   - Line 232: Context about breadth vs depth
+- Added `padding-right: 100px` to `navContent` to leave room for controls (language selector + theme toggle)
+- Created separate breakpoint for very small screens (480px)
+- Adjusted gaps and font sizes for better mobile layout
 
-8. **"múltiples umbrales"** → **"múltiples thresholds"**
-   - Line 271: Sensitivity analysis across multiple thresholds
+### 3. Spanish Translation Completeness
 
-### Rationale
-In Spanish technical writing, especially in fields like ML/AI, it's standard and more natural to keep technical terms in English rather than forcing Spanish translations. Native Spanish speakers in technical fields use these English terms regularly.
+**Files:**
+- `src/translations/es.ts`
+- `src/translations/en.ts`
+- `src/pages/BlogPost/BlogPost.tsx`
 
-### Files Modified
-- **`src/content/blog/index.ts`**: Updated `contentEs` field with natural technical terminology
+Completed all Spanish translations:
 
-### Build and Deployment
-- Successfully built the application (npm run build)
-- Deployed to S3 bucket: `marcosantar.com`
-- CloudFront cache invalidated (Distribution ID: EONAIEAJ6WT2O)
-- **Invalidation ID**: `I8X3V0GOQUGTNFI2C9XF7R2CDD`
-- Status: Deployed and live at https://marcosantar.com
+| Item | English | Spanish |
+|------|---------|---------|
+| Skills title | Skills | Habilidades |
+| Rotating title | Wannabe Mech Interp Researcher | Aspirante a Mech Interp Researcher |
+| Degree | Computer Engineering | Ingeniería en Computación |
+| Education description | software engineering, embedded systems, computer architecture | ingeniería de software, sistemas embebidos, arquitectura de computadoras |
+| WeHaus description | smart homes | hogares inteligentes |
+| Post not found | Post Not Found | Post No Encontrado |
+| Post not found message | The blog post you're looking for doesn't exist. | El post que estás buscando no existe. |
+| Empathy blog title | We Tried to Measure Empathy in LLMs... | Intentamos Medir Empatía en LLMs... |
+| Empathy blog excerpt | (full translation) | (full translation) |
 
-## Technical Stack
-- **React 18.2.0** with TypeScript
-- **Custom i18n system** (no external library)
-- **LanguageContext** for state management
-- **Argentine Spanish dialect** (voseo)
-- **AWS Infrastructure**: S3 + CloudFront + Route53
+**Technical terms kept in English** (would sound unnatural translated):
+- Mechanistic interpretability, activation steering, representation analysis
+- LLM, AI safety, computer vision, full-stack, IoT
+- Layer-specific, jailbreak, probes, steering vectors, AUROC, d-prime
 
-## Key Design Decisions
+---
 
-### 1. Bilingual Content Strategy
-- Separate content fields: `content` (English) and `contentEs` (Spanish)
-- Translation system in `src/translations/` for UI text
-- Full blog post translations stored directly in blog post objects
-
-### 2. Technical Term Policy
-- Keep English technical terms in Spanish translation:
-  - ML/AI terminology: "language models", "activation geometry", "bandwidth", "PCA", "SAE", "steering vectors"
-  - Technical metrics: "success rate", "threshold", "linear separability", "diminishing returns"
-  - Technical concepts: "breadth", "depth", "trade off", "averaged"
-- This reflects how Spanish-speaking technical professionals actually communicate
-
-### 3. Argentine Spanish Dialect (Voseo)
-Examples throughout the Spanish translation:
-- "Pensalo como" (not "Piénsalo como")
-- "Podés extraer" (not "Puedes extraer")
-- Uses "vos" conjugations instead of "tú" conjugations
-
-## Project Structure Reference
+## Commits Made
 
 ```
-src/
-├── context/
-│   ├── LanguageContext.tsx     # Language state management with localStorage
-│   └── ThemeContext.tsx         # Theme state management
-├── translations/
-│   ├── en.ts                    # English translations
-│   ├── es.ts                    # Spanish translations (Argentine dialect)
-│   └── index.ts                 # Export utilities
-├── hooks/
-│   └── useTranslation.ts        # Hook for accessing translations
-├── components/
-│   └── common/
-│       ├── LanguageSelector/    # Language toggle component
-│       └── Navigation/          # Nav with language + theme selectors
-├── content/
-│   └── blog/
-│       └── index.ts             # Blog posts with contentEs field
-└── pages/
-    ├── BlogPost/                # Loads content based on language
-    └── Blog/                    # Shows translated metadata
+1ca3480 Complete Spanish translations for all UI text
+89a0e80 Fix mobile navigation layout to prevent overlapping with controls
+beff95d Add theoretical context section and refine language for social media
 ```
 
-## Previous Session Work (Context)
+---
 
-### Initial Bilingual Implementation
-1. Created bilingual system with language selector
-2. Implemented LanguageContext with localStorage persistence
-3. Created translation files (en.ts, es.ts)
-4. Updated all components to use translations
+## Deployments
 
-### Name Update
-Changed from "Marco Santar" to "Marco Santarcangelo Zazzetta" throughout the site
+All changes deployed to:
+- **S3 Bucket:** `marcosantar.com`
+- **CloudFront Distribution:** `EONAIEAJ6WT2O`
+- **Live URL:** https://marcosantar.com
 
-### Blog Translation Evolution
-1. First approach: Banner for "content available in English only" (rejected)
-2. Second approach: Full translation with separate `contentEs` field (accepted)
-3. Third approach: Changed from Peninsular Spanish (tú) to Argentine Spanish (vos)
-4. **Fourth approach (this session)**: Replace unnatural technical terms with English
+---
 
-## Translation Philosophy
+## Related Repositories
 
-**Spanish Technical Writing Best Practices:**
-- ✅ Keep ML/AI terminology in English
-- ✅ Keep established technical metrics in English
-- ✅ Use voseo for Argentine audience
-- ✅ Natural flow over literal translation
-- ❌ Avoid forced translations of technical terms
-- ❌ Don't use "tú" conjugations (use "vos" instead)
+1. **Portfolio (this repo):** https://github.com/marcosantar93/portfolio
+2. **Empathy Research:** https://github.com/marcosantar93/empathetic-language-bandwidth (public)
 
-**Example Comparisons:**
-- ❌ "tasa de éxito" → ✅ "success rate"
-- ❌ "separabilidad lineal" → ✅ "linear separability"
-- ❌ "rendimientos decrecientes" → ✅ "diminishing returns"
-- ❌ "Piénsalo" (tú) → ✅ "Pensalo" (vos)
-- ❌ "Puedes" (tú) → ✅ "Podés" (vos)
+---
 
-## Next Session / Future Work
+## Blog Posts on Site
 
-### Potential Improvements
-1. Consider adding language-specific meta tags for SEO
-2. Review other blog posts if/when they're added for translation needs
-3. Monitor user feedback on translation quality
-4. Consider adding a "Report Translation Issue" feature
+1. **Empathy Structure Validated** (`/blog/empathy-structure-validated`)
+   - Main research blog post about cosine similarity pitfall and empathy representation
+   - Full content in both EN and ES
+   - Ready for social media publishing
 
-### Known Issues
-- ESLint warning in `BlogPost.tsx` line 41: Unnecessary escape character in regex
-- Build warnings about outdated dependencies (browserslist, babel-preset-react-app)
-  - These are CRA (Create React App) related and don't affect functionality
+2. **Layer-Specific Safety Vulnerabilities** (`/blog/layer-specific-safety-vulnerabilities`)
+   - 83% jailbreak rate via activation steering on Mistral-7B
+   - Full content in both EN and ES
 
-## Session End Status
-✅ All unnatural technical terms reviewed and replaced
-✅ Site rebuilt successfully
-✅ Deployed to production
-✅ CloudFront cache invalidated
-✅ Changes live at https://marcosantar.com
+3. **Empathetic Language Bandwidth** (`/blog/empathetic-language-bandwidth`)
+   - Original empathy bandwidth measurement study
+   - Full content in both EN and ES
+
+---
+
+## Infrastructure Notes
+
+- **Domain:** marcosantar.com (Route53)
+- **SSL:** ACM Certificate (TLS 1.2+)
+- **CDN:** CloudFront with custom error responses for SPA routing (404/403 → /index.html)
+- **Deploy command:**
+  ```bash
+  npm run build && aws s3 sync build/ s3://marcosantar.com/ --delete && aws cloudfront create-invalidation --distribution-id EONAIEAJ6WT2O --paths "/*"
+  ```
+
+---
+
+## Future Work / TODO
+
+- [ ] Consider adding more blog posts
+- [ ] Human evaluation of steered outputs (for empathy research)
+- [ ] Potential newsletter subscription feature
+- [ ] Comments system for blog posts
+
+---
+
+## Key Files Reference
+
+| Purpose | File Path |
+|---------|-----------|
+| Blog content | `src/content/blog/index.ts` |
+| English translations | `src/translations/en.ts` |
+| Spanish translations | `src/translations/es.ts` |
+| Navigation styles | `src/components/common/Navigation/Navigation.module.css` |
+| Blog list page | `src/pages/Blog/Blog.tsx` |
+| Blog post page | `src/pages/BlogPost/BlogPost.tsx` |
+| Project instructions | `CLAUDE.md` |
