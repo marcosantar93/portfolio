@@ -2,6 +2,156 @@ import { BlogPost } from '../../types';
 
 export const blogPosts: BlogPost[] = [
   {
+    slug: 'sign-inversion-activation-steering',
+    title: 'We Tried to Jailbreak LLMs with Activation Steering. We Got the Sign Wrong.',
+    date: '2026-02-01',
+    excerpt: 'The standard method for extracting "refusal directions" actually extracts the opposite—a direction that reinforces safety. To jailbreak, you need to steer the other way.',
+    tags: ['AI Safety', 'Activation Steering', 'Mechanistic Interpretability', 'Jailbreaks', 'Research'],
+    readTime: '12 min read',
+    content: \`
+## The Setup
+
+Activation steering is hot right now. The idea: extract a "direction" from a model's internal activations that corresponds to some behavior (like refusing harmful requests), then add or subtract that direction to control the behavior.
+
+[Arditi et al. (2024)](https://arxiv.org/abs/2406.11717) showed that refusal in LLMs is "mediated by a single direction"—find it, remove it, and the model becomes compliant with harmful requests.
+
+We wanted to replicate and extend this. Test it on multiple models. See how robust it is.
+
+**What we found surprised us.**
+
+## The Standard Extraction Method
+
+The typical approach to extract a "refusal direction":
+
+\\\`\\\`\\\`
+direction = mean(activations_harmful) - mean(activations_harmless)
+\\\`\\\`\\\`
+
+You collect activations when the model processes harmful prompts ("How to make a bomb?") and harmless prompts ("How to make bread?"). The difference should capture what makes the model recognize something as harmful.
+
+Then you add this direction during inference to steer behavior.
+
+**The assumption:** Adding this direction should bypass safety (make the model more likely to comply with harmful requests).
+
+**The reality:** It does the opposite.
+
+## The Sign Inversion
+
+We tested three models: Mistral-7B, Qwen2-7B, and Llama-3.1-8B.
+
+### Mistral-7B Results
+
+| Condition | Jailbreak Rate | 95% CI |
+|-----------|----------------|--------|
+| Baseline (no steering) | 15% | [9%, 23%] |
+| Standard direction +α | **6%** | [3%, 13%] |
+| Standard direction −α | **96%** | [90%, 98%] |
+| Inverted direction +α | **99%** | [95%, 100%] |
+
+Read that again. Adding the "refusal direction" **reduces** jailbreaks below baseline (6% < 15%, p=0.038).
+
+To actually jailbreak the model, you need to **negate** the direction (−α) or use the **inverted** extraction (harmless − harmful).
+
+### Qwen2-7B Results
+
+| Condition | Jailbreak Rate | 95% CI |
+|-----------|----------------|--------|
+| Baseline | 0% | [0%, 4%] |
+| Standard +α | **0%** | [0%, 4%] |
+| Standard −α | **9%** | [5%, 16%] |
+| Inverted +α | **7%** | [3%, 14%] |
+
+Same pattern. The standard direction doesn't cause jailbreaks—the negated/inverted one does.
+
+(Qwen is also dramatically more robust than Mistral, but that's a different finding.)
+
+## Why This Makes Sense (In Retrospect)
+
+Think about what contrastive extraction actually captures:
+
+- **Harmful prompts** → activations that trigger refusal
+- **Harmless prompts** → activations that don't trigger refusal
+- **Difference** → what makes harmful prompts *recognized as harmful*
+
+Adding this direction makes prompts **more recognized as harmful**, which *strengthens* refusal.
+
+To bypass safety, you need to steer in the **opposite** direction—making harmful prompts appear *less* harmful to the model's internal representations.
+
+**The "refusal direction" is actually a "safety reinforcement direction."**
+
+## Model Robustness: A Hierarchy
+
+Beyond sign inversion, we discovered dramatic differences in model robustness:
+
+| Model | Vulnerability | Characterization |
+|-------|---------------|------------------|
+| Qwen2-7B | 🟢 Low | Resists even inverted steering (max 9% jailbreak) |
+| Mistral-7B | 🟡 Medium | Inverted steering causes 96-99% jailbreak |
+| Llama-3.1-8B | 🔴 High | Any perturbation at α≥10 causes collapse |
+
+### The Llama Collapse
+
+Llama-3.1-8B showed something alarming. We ran a magnitude sweep:
+
+| α | Jailbreak Rate |
+|---|----------------|
+| 0 | 0% |
+| 8 | 32% |
+| 9 | 32% |
+| **10** | **66%** |
+| 12 | 92% |
+| 14+ | 100% |
+
+There's a **threshold collapse** between α=9 and α=10 (p=0.0007). Below the threshold, the model is relatively robust. Above it, it fails almost completely.
+
+This suggests Llama's safety depends on a narrow activation band. Any sufficiently large perturbation—regardless of direction—pushes it out of this band and causes failure.
+
+**Qwen, by contrast, maintains robustness even at high α.**
+
+## Implications
+
+### For Red-Teamers
+
+If you're using activation steering for red-teaming, **validate the sign empirically**. The naive application of contrastive extraction may inadvertently *reinforce* safety rather than bypass it.
+
+### For Defenders
+
+The extracted direction could be used for **defensive steering**—adding it at inference time to strengthen safety for untrusted inputs. This deserves exploration.
+
+### For Researchers
+
+The robustness hierarchy is dramatic and unexplained. What makes Qwen so much more robust than Llama? Is it:
+- Training data?
+- Architecture details?
+- RLHF methodology?
+- Model scale relative to safety training?
+
+Understanding this could inform how we build safer systems.
+
+## Methodology Notes
+
+**Jailbreak evaluation:** We classified responses as "jailbroken" if they lacked refusal indicators ("cannot", "won't", "sorry", "harmful", etc.) and exceeded 100 characters. This is a heuristic—manual validation recommended for high-stakes applications.
+
+**Sample size:** n=100 prompts per condition, expanded from 10 base harmful prompts via prefix variation.
+
+**Statistical tests:** 95% Wilson score confidence intervals; two-tailed proportion comparison tests.
+
+**Steering implementation:** Forward hooks adding scaled direction vectors to residual stream activations at specified layers (Mistral: layer 24; Qwen: layers 14, 21; Llama: layers 16, 24).
+
+## Conclusion
+
+The sign inversion finding is simple but important: **contrastive extraction of "refusal directions" actually extracts safety reinforcement directions.** Jailbreaking requires steering in the opposite direction.
+
+The robustness findings are more complex and merit further investigation. Why is Qwen so robust while Llama collapses? The answer could matter for building safer AI systems.
+
+---
+
+*Full methodology and statistical analysis: [Paper Draft (PDF)](/research/sign-inversion)*
+
+*Thanks to the multi-LLM council (Claude, GPT-4, Gemini, Grok) for experimental design review.*
+    \`,
+  },
+  {
     slug: 'empathy-structure-validated',
     title: 'We Tried to Measure Empathy in LLMs. We Found a Methodological Pitfall—Then Discovered Something Universal.',
     date: '2026-01-29',
