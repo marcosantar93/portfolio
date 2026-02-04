@@ -120,6 +120,11 @@ Actualmente experimento con activation steering y representation analysis en mi 
 
   // Blog Posts
   blogPosts: {
+    'sign-inversion-activation-steering': {
+      title: 'Intentamos Jailbreakear LLMs con Activation Steering. Nos Equivocamos de Signo.',
+      excerpt: 'El método estándar para extraer "refusal directions" en realidad extrae lo opuesto—una dirección que refuerza la seguridad. Para jailbreakear, necesitás hacer steering en la dirección contraria.',
+      readTime: '12 min de lectura',
+    },
     'empathy-structure-validated': {
       title: 'Intentamos Medir Empatía en LLMs. Encontramos un Pitfall Metodológico—Y Luego Descubrimos Algo Universal.',
       excerpt: 'Cómo un experimento fallido reveló un problema sutil con la comparación de probes, y lo que aprendimos cuando lo arreglamos: la estructura de empatía es real, causalmente significativa, y universal entre arquitecturas.',
